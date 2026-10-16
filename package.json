@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@supabase/server": "^1.9.2",
     "accepts": "^2.0.0",
+    "bcryptjs": "^3.0.3",
     "body-parser": "^2.3.0",
     "bytes": "^3.1.2",
     "call-bind-apply-helpers": "^1.0.2",
@@ -12,9 +14,11 @@
     "content-disposition": "^2.0.1",
     "content-type": "^2.1.0",
     "cookie": "^0.7.2",
+    "cookie-parser": "^1.4.7",
     "cookie-signature": "^1.2.2",
     "debug": "^4.4.3",
     "depd": "^2.0.0",
+    "dotenv": "^18.0.7",
     "dunder-proto": "^1.0.1",
     "ee-first": "^1.1.1",
     "encodeurl": "^2.0.0",
@@ -38,6 +42,7 @@
     "inherits": "^2.0.4",
     "ipaddr.js": "^1.9.1",
     "is-promise": "^4.0.0",
+    "jsonwebtoken": "^9.0.3",
     "math-intrinsics": "^1.1.0",
     "media-typer": "^1.1.1",
     "merge-descriptors": "^2.0.0",
@@ -50,6 +55,7 @@
     "once": "^1.4.0",
     "parseurl": "^1.3.3",
     "path-to-regexp": "^8.4.2",
+    "pg": "^8.23.1",
     "proxy-addr": "^2.0.8",
     "qs": "^6.16.0",
     "range-parser": "^1.3.0",
@@ -70,7 +76,9 @@
     "vary": "^1.1.2",
     "wrappy": "^1.0.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
