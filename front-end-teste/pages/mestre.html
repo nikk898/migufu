@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MIGUFU - Início da Conta Mestre</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../components/navbar.css">
+  <link rel="stylesheet" href="../components/resumo.css">
+  <link rel="stylesheet" href="../css/paginas/mestre.css">
+</head>
+<body>
+  <!-- Navbar reutilizável (components/navbar.js) -->
+  <div id="navbar"></div>
+
+  <main class="conteudo">
+    <header class="mestre__cabecalho">
+      <h1 class="titulo-principal">Olá!</h1>
+      <p class="texto">Veja o resumo das contas ativas no sistema.</p>
+    </header>
+
+    <section class="mestre__secao" aria-labelledby="titulo-resumo">
+      <h2 class="subtitulo" id="titulo-resumo">Resumo do Sistema</h2>
+
+      <ul class="resumo">
+        <li class="card resumo__card">
+          <span class="resumo__valor resumo__valor--primaria" data-mestre="cadastradas">2</span>
+          <span class="resumo__rotulo">Instituições cadastradas</span>
+        </li>
+        <li class="card resumo__card">
+          <span class="resumo__valor resumo__valor--sucesso" data-mestre="ativas">1</span>
+          <span class="resumo__rotulo">Instituições ativas</span>
+        </li>
+        <li class="card resumo__card">
+          <span class="resumo__valor resumo__valor--erro" data-mestre="pausadas">1</span>
+          <span class="resumo__rotulo">Instituições pausadas</span>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <script src="../components/icones.js"></script>
+  <script src="../components/navbar.js"></script>
+  <script src="../js/mestre.js"></script>
+</body>
+</html>

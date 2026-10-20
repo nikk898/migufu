@@ -1,0 +1,76 @@
+/* ==========================================================================
+   Cabeçalho de página (componente reutilizável)
+   Barra com botão voltar + título (+ logo no mobile).
+   Mobile: ocupa o lugar do cabeçalho da navbar (96px).
+   Desktop: barra branca de 112px ao lado da barra lateral.
+   ========================================================================== */
+
+.cabecalho-pagina {
+  display: grid;
+  grid-template-columns: 56px 1fr 56px;
+  align-items: center;
+  height: var(--navbar-header-altura);
+  padding: 0 var(--esp-2);
+  background: var(--cor-fundo-02);
+  border-bottom: var(--borda-apoio);
+}
+
+.cabecalho-pagina__voltar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--cor-texto-01);
+}
+
+.cabecalho-pagina__voltar .icone {
+  width: 40px;
+  height: 40px;
+}
+
+.cabecalho-pagina__titulo {
+  margin: 0;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+  font-weight: 700;
+  color: #000;
+}
+
+.cabecalho-pagina__logo {
+  width: 55px;
+  height: 55px;
+  object-fit: contain;
+  justify-self: end;
+}
+
+@media (min-width: 900px) {
+  .cabecalho-pagina {
+    display: flex;
+    gap: var(--esp-3);
+    height: 112px;
+    margin-left: var(--navbar-largura);
+    padding: 0 var(--esp-4);
+  }
+
+  .cabecalho-pagina__voltar {
+    width: 70px;
+    height: 70px;
+  }
+
+  .cabecalho-pagina__voltar .icone {
+    width: 56px;
+    height: 56px;
+  }
+
+  .cabecalho-pagina__titulo {
+    text-align: left;
+    text-transform: none;
+  }
+
+  .cabecalho-pagina__logo {
+    display: none;
+  }
+}

@@ -1,0 +1,71 @@
+/* ==========================================================================
+   Cards de resumo (componente reutilizável)
+   Usado na Home do Administrador e na Home da Conta Mestre.
+
+   <ul class="resumo">
+     <li class="card resumo__card">
+       <span class="resumo__valor resumo__valor--erro">15</span>
+       <span class="resumo__rotulo">Estudantes sem Migufu</span>
+     </li>
+   </ul>
+   Variações de cor do número: --erro, --sucesso, --primaria
+   ========================================================================== */
+
+.resumo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--esp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.resumo__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+  width: 88px;
+  min-height: 112px;
+  padding: var(--esp-2);
+  text-align: center;
+}
+
+.resumo__valor {
+  font-size: 32px;
+  line-height: 32px;
+  font-weight: 700;
+}
+
+.resumo__valor--erro {
+  color: var(--cor-status-02);
+}
+
+.resumo__valor--sucesso {
+  color: var(--cor-status-01);
+}
+
+.resumo__valor--primaria {
+  color: var(--cor-primaria);
+}
+
+.resumo__rotulo {
+  font-size: var(--fs-legenda);
+  line-height: var(--lh-legenda);
+}
+
+@media (min-width: 900px) {
+  .resumo {
+    justify-content: flex-start;
+  }
+
+  .resumo__card {
+    width: 128px;
+  }
+
+  .resumo__rotulo {
+    font-weight: 700;
+  }
+}

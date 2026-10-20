@@ -1,0 +1,160 @@
+/* ==========================================================================
+   Página: Gestão de Instituições da Conta Mestre
+   (pages/mestre-instituicoes.html)
+   ========================================================================== */
+
+.inst {
+  padding-inline: var(--esp-4);
+}
+
+/* --- Ações no topo ------------------------------------------------------ */
+.inst__adicionar {
+  display: none; /* no mobile usa o botão flutuante */
+}
+
+.inst__fab {
+  position: fixed;
+  right: var(--esp-3);
+  bottom: calc(var(--navbar-bottom-altura) + var(--esp-3));
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: var(--cor-primaria);
+  color: var(--cor-texto-03);
+  box-shadow: var(--sombra-card);
+}
+
+.inst__fab .icone {
+  width: 40px;
+  height: 40px;
+}
+
+/* --- Busca -------------------------------------------------------------- */
+.inst__busca {
+  position: relative;
+  max-width: 327px;
+}
+
+.inst__busca-icone {
+  position: absolute;
+  top: 12px;
+  left: 10px;
+  color: var(--cor-apoio);
+  pointer-events: none;
+}
+
+.inst__busca .campo__entrada {
+  padding-left: 48px;
+}
+
+/* --- Lista de instituições --------------------------------------------- */
+.inst__lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 327px), 327px));
+  gap: var(--esp-3) var(--esp-5);
+  margin: var(--esp-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.inst__vazio {
+  margin-top: var(--esp-4);
+}
+
+.inst-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--esp-3);
+  min-height: 136px;
+  padding: var(--esp-3) var(--esp-3) var(--esp-3) var(--esp-3);
+}
+
+.inst-card__nome {
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.inst-card__principal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-3);
+}
+
+.inst-card__acoes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin: -4px 8px 0 0;
+}
+
+.inst-card__acao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--cor-texto-01);
+  transition: background-color 0.15s ease;
+}
+
+.inst-card__acao:hover {
+  background: var(--cor-fundo-01);
+}
+
+.inst-card__acao--perigo {
+  color: var(--cor-status-02);
+}
+
+/* --- Formulário do modal (adicionar / editar) -------------------------- */
+.inst-form__grade {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--esp-3);
+}
+
+.inst-form__coluna {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.inst-form__aviso {
+  margin-top: var(--esp-3);
+  color: var(--cor-status-02);
+  font-size: var(--fs-legenda);
+  line-height: var(--lh-legenda);
+}
+
+@media (min-width: 900px) {
+  .conteudo.inst {
+    padding: var(--esp-5);
+  }
+
+  .inst__adicionar {
+    display: inline-flex;
+    width: 280px;
+    margin-bottom: var(--esp-4);
+  }
+
+  .inst__fab {
+    display: none;
+  }
+
+  .inst__lista {
+    margin-top: var(--esp-4);
+  }
+
+  .inst-form__grade {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--esp-5);
+    padding-inline: 60px;
+  }
+}

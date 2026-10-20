@@ -1,0 +1,242 @@
+/* ==========================================================================
+   Navbar (componente reutilizável)
+   - Desktop (>= 900px): sidebar fixa à esquerda, 240px
+   - Mobile  (<  900px): cabeçalho com logo + "Sair" e barra de abas fixa
+                         na parte inferior
+   Estrutura gerada por components/navbar.js
+   ========================================================================== */
+
+.navbar {
+  background: var(--cor-fundo-02);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--navbar-header-altura);
+  padding: 0 var(--esp-4);
+  border-bottom: var(--borda-apoio);
+}
+
+/* --- Marca -------------------------------------------------------------- */
+.navbar__marca {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.navbar__logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.navbar__logo-texto {
+  width: 126px;
+  height: auto;
+}
+
+/* --- Menu (mobile: barra inferior) ------------------------------------- */
+.navbar__menu {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  height: var(--navbar-bottom-altura);
+  background: var(--cor-fundo-02);
+  border-top: var(--borda-apoio);
+}
+
+.navbar__item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  color: var(--cor-apoio);
+  font-size: var(--fs-legenda);
+  line-height: var(--lh-legenda);
+  font-weight: 700;
+}
+
+.navbar__item.is-ativo {
+  color: var(--cor-primaria);
+}
+
+.navbar__icone {
+  width: 32px;
+  height: 32px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+/* --- Sair --------------------------------------------------------------- */
+.navbar__sair {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  color: var(--cor-status-02);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: 700;
+}
+
+.navbar__sair .navbar__icone {
+  width: 28px;
+  height: 28px;
+}
+
+/* --- Variante "app" (Voluntário / Estudante Internacional) -------------- */
+.navbar--app {
+  padding: 0 var(--esp-3);
+}
+
+.navbar__voltar,
+.navbar__notificacoes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--cor-texto-01);
+}
+
+.navbar__voltar .navbar__icone,
+.navbar__notificacoes .navbar__icone {
+  width: 32px;
+  height: 32px;
+}
+
+.navbar__rotulo-desktop {
+  display: none;
+}
+
+/* --- Variante painel sem cabeçalho no mobile ---------------------------- */
+.navbar--sem-cabecalho {
+  height: 0;
+  padding: 0;
+  border-bottom: 0;
+}
+
+.navbar--sem-cabecalho .navbar__marca,
+.navbar--sem-cabecalho .navbar__sair {
+  display: none;
+}
+
+/* --- Desktop ------------------------------------------------------------ */
+@media (min-width: 900px) {
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 10;
+    width: var(--navbar-largura);
+    height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: var(--esp-3) 0;
+    border-bottom: 0;
+    border-right: var(--borda-apoio);
+  }
+
+  .navbar__marca {
+    padding: 0 var(--esp-4);
+    margin-bottom: var(--esp-3);
+    gap: 6px;
+  }
+
+  .navbar__logo-texto {
+    width: 120px;
+  }
+
+  .navbar__menu {
+    position: static;
+    flex-direction: column;
+    height: auto;
+    border-top: 0;
+    z-index: auto;
+  }
+
+  .navbar__item {
+    flex: none;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: var(--esp-3);
+    height: 48px;
+    padding: 0 var(--esp-3);
+    background: var(--cor-fundo-02);
+    color: var(--cor-texto-01);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    font-weight: 400;
+    transition: background-color 0.15s ease;
+  }
+
+  .navbar__item:hover {
+    background: var(--cor-fundo-01);
+  }
+
+  .navbar__item.is-ativo,
+  .navbar__item.is-ativo:hover {
+    background: var(--cor-primaria);
+    color: var(--cor-texto-03);
+  }
+
+  .navbar__icone {
+    width: 24px;
+    height: 24px;
+  }
+
+  .navbar__sair {
+    margin-top: auto;
+    padding: 0 var(--esp-3);
+    gap: var(--esp-3);
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+  }
+
+  .navbar__sair .navbar__icone {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* variante sem cabeçalho: volta a mostrar marca e "Sair" na barra lateral */
+  .navbar--sem-cabecalho .navbar__marca,
+  .navbar--sem-cabecalho .navbar__sair {
+    display: flex;
+  }
+
+  /* variante app: sem botão voltar; notificações no rodapé da barra lateral */
+  .navbar--app {
+    padding: var(--esp-3) 0;
+  }
+
+  .navbar__voltar {
+    display: none;
+  }
+
+  .navbar__notificacoes {
+    width: auto;
+    height: 48px;
+    margin-top: auto;
+    justify-content: flex-start;
+    gap: var(--esp-3);
+    padding: 0 var(--esp-3);
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .navbar__notificacoes .navbar__icone {
+    width: 24px;
+    height: 24px;
+  }
+
+  .navbar__rotulo-desktop {
+    display: inline;
+  }
+}

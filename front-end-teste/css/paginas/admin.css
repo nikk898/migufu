@@ -1,0 +1,118 @@
+/* ==========================================================================
+   Página: Home do Administrador (pages/admin.html)
+   ========================================================================== */
+
+.admin__cabecalho {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.admin__instituicao {
+  margin-top: var(--esp-2);
+}
+
+.admin__secao {
+  margin-top: var(--esp-4);
+}
+
+.admin__secao + .admin__secao {
+  margin-top: var(--esp-5);
+}
+
+.admin__secao > .subtitulo {
+  margin-bottom: var(--esp-3);
+}
+
+/* --- Visão geral de apadrinhamento ------------------------------------- */
+.apadrinhamento {
+  margin-inline: var(--esp-2);
+  padding: var(--esp-3) var(--esp-2) var(--esp-3);
+}
+
+.apadrinhamento__barra {
+  position: relative;
+  height: 16px;
+  border-radius: 20px;
+  background: var(--cor-primaria);
+  overflow: hidden;
+}
+
+/* A largura é definida pelo admin.js a partir dos números */
+.apadrinhamento__barra-sem {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 0;
+  background: var(--cor-status-02);
+  border-radius: 0 20px 20px 0;
+  transition: width 0.4s ease;
+}
+
+.apadrinhamento__legenda {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  margin: var(--esp-3) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-legenda);
+  line-height: var(--lh-legenda);
+}
+
+.apadrinhamento__legenda li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--esp-2);
+  max-width: 50%;
+}
+
+.apadrinhamento__ponto {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  margin-top: 2px;
+  border-radius: 50%;
+}
+
+.apadrinhamento__ponto--com {
+  background: var(--cor-primaria);
+}
+
+.apadrinhamento__ponto--sem {
+  background: var(--cor-status-02);
+}
+
+/* --- Desktop ------------------------------------------------------------ */
+@media (min-width: 900px) {
+  .admin__instituicao {
+    margin-top: var(--esp-4);
+  }
+
+  .admin__secao {
+    margin-top: var(--esp-3);
+  }
+
+  .apadrinhamento {
+    margin-inline: 0;
+    padding: var(--esp-3) var(--esp-4) var(--esp-3);
+  }
+
+  .apadrinhamento__legenda {
+    justify-content: center;
+    gap: var(--esp-5);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+  }
+
+  .apadrinhamento__legenda li {
+    align-items: center;
+    max-width: none;
+  }
+
+  .apadrinhamento__ponto {
+    margin-top: 0;
+  }
+
+}

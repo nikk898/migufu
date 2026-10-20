@@ -1,0 +1,58 @@
+/* ==========================================================================
+   Página: Ajuda e Suporte - Voluntário / Estudante Internacional
+   (pages/ajuda.html)
+   ========================================================================== */
+
+.ajuda__intro {
+  margin-top: var(--esp-2);
+}
+
+.ajuda__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  margin-top: var(--esp-3);
+}
+
+/* O rótulo usa o estilo de subtítulo ("Como podemos ajudar?") */
+.campo__rotulo.ajuda__rotulo {
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+  letter-spacing: var(--ls-h2);
+  font-weight: 600;
+  color: #000;
+}
+
+.ajuda__form .campo__entrada {
+  min-height: 144px;
+}
+
+.ajuda__enviar {
+  width: 100%;
+}
+
+.ajuda__sucesso {
+  padding: var(--esp-3);
+  background: var(--cor-fundo-02);
+  border-left: 4px solid var(--cor-status-01);
+  border-radius: var(--raio);
+}
+
+@media (min-width: 900px) {
+  .ajuda__intro {
+    margin-top: var(--esp-3);
+  }
+
+  .ajuda__form {
+    margin-top: var(--esp-4);
+  }
+
+  .ajuda__form .campo__entrada {
+    min-height: 200px;
+  }
+
+  .ajuda__enviar {
+    align-self: flex-start;
+    width: 280px;
+  }
+}

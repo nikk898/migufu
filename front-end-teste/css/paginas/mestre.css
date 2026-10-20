@@ -1,0 +1,17 @@
+/* ==========================================================================
+   Página: Home da Conta Mestre (pages/mestre.html)
+   ========================================================================== */
+
+.mestre__secao {
+  margin-top: var(--esp-3);
+}
+
+.mestre__secao > .subtitulo {
+  margin-bottom: var(--esp-3);
+}
+
+@media (min-width: 900px) {
+  .mestre__secao {
+    margin-top: var(--esp-4);
+  }
+}

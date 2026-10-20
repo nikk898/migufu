@@ -1,0 +1,108 @@
+/* ==========================================================================
+   Modal (componente reutilizável) - baseado no elemento <dialog>
+   Mobile: 327px de largura. Desktop: até 803px.
+   Estrutura gerada por components/modal.js
+   ========================================================================== */
+
+.modal {
+  width: min(327px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: var(--raio);
+  background: var(--cor-fundo-02);
+  color: var(--cor-texto-01);
+  box-shadow: var(--sombra-card);
+  overflow: auto;
+}
+
+.modal::backdrop {
+  background: rgba(22, 28, 45, 0.6);
+}
+
+.modal__conteudo {
+  position: relative;
+  padding: var(--esp-4) var(--esp-3) var(--esp-4);
+}
+
+.modal__cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0 var(--esp-4);
+  margin-bottom: var(--esp-3);
+}
+
+.modal__titulo {
+  text-align: center;
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+  font-weight: 700;
+  color: #000;
+}
+
+.modal__fechar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--cor-texto-01);
+}
+
+/* Rodapé de ações (botões) */
+.modal__acoes {
+  display: flex;
+  justify-content: center;
+  gap: var(--esp-3);
+  margin-top: var(--esp-4);
+}
+
+.modal__acoes .botao {
+  flex: 1;
+  max-width: 130px;
+  padding: 0 var(--esp-2);
+}
+
+/* Texto simples (ex.: confirmações) */
+.modal__texto {
+  text-align: center;
+}
+
+@media (min-width: 900px) {
+  .modal--larga {
+    width: min(803px, calc(100vw - 48px));
+  }
+
+  .modal--larga .modal__conteudo {
+    padding: 44px 32px 32px;
+  }
+
+  .modal--larga .modal__cabecalho {
+    justify-content: flex-start;
+    padding: 0;
+    margin-bottom: var(--esp-4);
+  }
+
+  .modal--larga .modal__titulo {
+    font-size: var(--fs-h2);
+    line-height: var(--lh-h2);
+    letter-spacing: var(--ls-h2);
+    font-weight: 600;
+  }
+
+  .modal--larga .modal__fechar {
+    top: 20px;
+    right: 20px;
+  }
+
+  .modal--larga .modal__acoes {
+    justify-content: flex-end;
+  }
+}

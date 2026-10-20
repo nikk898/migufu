@@ -1,0 +1,386 @@
+/* ==========================================================================
+   MIGUFU - Estilos globais
+   Fonte dos valores: guia de estilo do Figma (Cores, Tipografia, Espaçamentos)
+   ========================================================================== */
+
+/* --- Tokens de design ---------------------------------------------------- */
+:root {
+  /* Cores */
+  --cor-primaria: #076eb8;
+  --cor-fundo-01: #dae6f2;
+  --cor-fundo-02: #ffffff;
+  --cor-apoio: #979797;
+  --cor-texto-01: #161c2d;
+  --cor-texto-03: #ffffff;
+  --cor-status-01: #28a745; /* sucesso */
+  --cor-status-02: #dc3545; /* erro / alerta */
+  /* ATENÇÃO: cor de "pendente/pausada" NÃO foi lida do Figma (limite do plano).
+     Valor provisório - conferir em "Cores" no guia de estilo e ajustar aqui. */
+  --cor-pendente: #f0a500;
+
+  /* Tipografia (mobile first; sobrescrita no breakpoint desktop) */
+  --fonte: "Geologica", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --fs-h1: 24px;
+  --lh-h1: 32px;
+  --fs-h2: 18px;
+  --lh-h2: 24px;
+  --ls-h2: 0;
+  --fs-body: 14px;
+  --lh-body: 20px;
+  --fs-legenda: 12px;
+  --lh-legenda: 16px;
+
+  /* Espaçamentos */
+  --esp-1: 4px;
+  --esp-2: 8px;
+  --esp-3: 16px;
+  --esp-4: 24px;
+  --esp-5: 40px;
+
+  /* Elementos */
+  --raio: 8px;
+  --sombra-card: 0 4px 4px rgba(22, 28, 45, 0.3);
+  --borda-apoio: 1px solid var(--cor-apoio);
+
+  /* Layout (usados pela navbar e pelas páginas) */
+  --navbar-largura: 240px;
+  --navbar-header-altura: 96px;
+  --navbar-bottom-altura: 64px;
+}
+
+@media (min-width: 900px) {
+  :root {
+    --fs-h1: 32px;
+    --lh-h1: 48px;
+    --fs-h2: 20px;
+    --lh-h2: 28px;
+    --ls-h2: 1px;
+    --fs-body: 16px;
+    --lh-body: 24px;
+  }
+}
+
+/* --- Reset básico ------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Garante que o atributo hidden sempre esconda o elemento */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--cor-fundo-01);
+  color: var(--cor-texto-01);
+  font-family: var(--fonte);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cor-primaria);
+  outline-offset: 2px;
+}
+
+/* --- Tipografia --------------------------------------------------------- */
+.titulo-principal {
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+  font-weight: 700;
+  color: #000;
+}
+
+.subtitulo {
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+  letter-spacing: var(--ls-h2);
+  font-weight: 600;
+  color: #000;
+}
+
+.texto {
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+}
+
+.legenda {
+  font-size: var(--fs-legenda);
+  line-height: var(--lh-legenda);
+}
+
+.negrito {
+  font-weight: 700;
+}
+
+/* --- Componentes genéricos --------------------------------------------- */
+.card {
+  background: var(--cor-fundo-02);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-card);
+}
+
+/* Acessibilidade: texto visível só para leitores de tela */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Ícones SVG (components/icones.js) */
+.icone {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+/* --- Botões -------------------------------------------------------------
+   <button class="botao botao--primario">ENVIAR</button>
+   Variações: --primario, --secundario, --perigo; --bloco (largura 280px) */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+  height: 48px;
+  padding: 0 var(--esp-3);
+  border: 2px solid var(--cor-primaria);
+  border-radius: var(--raio);
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 700;
+  text-align: center;
+  text-transform: uppercase;
+  transition: filter 0.15s ease, background-color 0.15s ease;
+}
+
+.botao--primario {
+  background: var(--cor-primaria);
+  color: var(--cor-texto-03);
+}
+
+.botao--secundario {
+  background: var(--cor-fundo-02);
+  color: var(--cor-primaria);
+}
+
+.botao--perigo {
+  background: var(--cor-status-02);
+  border-color: var(--cor-status-02);
+  color: var(--cor-texto-03);
+}
+
+.botao--bloco {
+  width: 100%;
+  max-width: 280px;
+}
+
+.botao:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+
+.botao:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* --- Campos de formulário ----------------------------------------------
+   <div class="campo">
+     <label class="campo__rotulo" for="x">Nome</label>
+     <input class="campo__entrada" id="x">
+     <p class="campo__erro" hidden>Mensagem</p>
+   </div> */
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.campo__rotulo {
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 700;
+}
+
+.campo__entrada {
+  width: 100%;
+  height: 48px;
+  padding: 0 var(--esp-3);
+  background: var(--cor-fundo-02);
+  border: 1px solid var(--cor-apoio);
+  border-radius: var(--raio);
+  color: var(--cor-texto-01);
+  font: inherit;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.campo__entrada::placeholder {
+  color: var(--cor-apoio);
+}
+
+.campo__entrada:focus {
+  border-color: var(--cor-primaria);
+}
+
+.campo__entrada[aria-invalid="true"] {
+  border-color: var(--cor-status-02);
+}
+
+textarea.campo__entrada {
+  height: 144px;
+  padding: 12px var(--esp-3);
+  resize: vertical;
+}
+
+select.campo__entrada {
+  appearance: none;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23161c2d' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 24px;
+}
+
+select.campo__entrada:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.campo__erro {
+  color: var(--cor-status-02);
+  font-size: var(--fs-legenda);
+  line-height: var(--lh-legenda);
+}
+
+/* Campo de senha com botão de mostrar/ocultar */
+.campo__senha {
+  position: relative;
+}
+
+.campo__senha .campo__entrada {
+  padding-right: 48px;
+}
+
+.campo__olho {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  color: var(--cor-apoio);
+}
+
+/* --- Chips de status ----------------------------------------------------
+   <span class="chip chip--sucesso"><span class="chip__ponto"></span>Apto</span> */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 8px 0 10px;
+  background: var(--cor-fundo-02);
+  border: 1px solid var(--chip-cor, var(--cor-apoio));
+  border-radius: 20px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.chip__ponto {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--chip-cor, var(--cor-apoio));
+}
+
+.chip--sucesso {
+  --chip-cor: var(--cor-status-01);
+}
+
+.chip--pendente {
+  --chip-cor: var(--cor-pendente);
+}
+
+.chip--erro {
+  --chip-cor: var(--cor-status-02);
+}
+
+/* Chip de largura fixa, sem ponto (ex.: Ativa / Pausada) */
+.chip--fixo {
+  width: 100px;
+  padding: 0;
+}
+
+/* Coluna central para telas do Voluntário / Estudante Internacional */
+.coluna {
+  width: 100%;
+  max-width: 560px;
+  margin-inline: auto;
+}
+
+@media (min-width: 900px) {
+  .coluna {
+    margin-inline: 0;
+  }
+}
+
+/* --- Estrutura de página com navbar -----------------------------------
+   Toda página interna usa <body class="com-navbar"> e coloca o conteúdo
+   dentro de <main class="conteudo">. A navbar é injetada por navbar.js. */
+.conteudo {
+  padding: var(--esp-3) var(--esp-3) calc(var(--navbar-bottom-altura) + var(--esp-4));
+}
+
+@media (min-width: 900px) {
+  .conteudo {
+    margin-left: var(--navbar-largura);
+    padding: 73px var(--esp-5) var(--esp-5);
+  }
+}
