@@ -1,0 +1,56 @@
+/* ==========================================================================
+   Recuperação de senha (pages/recuperar-senha.html)
+
+   O layout de duas colunas vem de css/paginas/login.css.
+   Aqui ficam só os estilos próprios desta página: textos e a tela
+   "E-mail enviado!".
+   ========================================================================== */
+
+.recuperar__vista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+}
+
+.recuperar__descricao {
+  text-align: center;
+  font-size: var(--fs-legenda);
+  line-height: var(--lh-legenda);
+}
+
+.recuperar__voltar-login {
+  text-align: center;
+  font-size: var(--fs-legenda);
+  line-height: var(--lh-legenda);
+}
+
+/* --- Confirmação -------------------------------------------------------- */
+.recuperar__vista--confirmacao {
+  align-items: center;
+}
+
+.recuperar__envelope {
+  width: 120px;
+  height: auto;
+}
+
+.recuperar__reenviar {
+  text-align: center;
+  font-size: var(--fs-legenda);
+  line-height: var(--lh-legenda);
+}
+
+.recuperar__status {
+  margin-top: var(--esp-1);
+  color: var(--cor-status-01);
+  font-weight: 700;
+}
+
+@media (min-width: 900px) {
+  .recuperar__descricao,
+  .recuperar__voltar-login,
+  .recuperar__reenviar {
+    font-size: 14px;
+    line-height: 20px;
+  }
+}

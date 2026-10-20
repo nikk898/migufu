@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MIGUFU - Login</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/paginas/login.css">
+</head>
+<body>
+  <main class="auth__pagina">
+    <!-- Marca: coluna azul no desktop, topo da página no mobile -->
+    <section class="auth__marca" aria-label="MIGUFU">
+      <img class="auth__logo" src="../assets/img/logo-migufu.png" alt="">
+      <img class="auth__logo-texto" src="../assets/img/logo-migufu-texto.png" alt="MIGUFU">
+      <p class="auth__slogan">Mentor para a integração<br>Global da UFU</p>
+    </section>
+
+    <section class="auth__painel">
+      <div class="auth__conteudo">
+        <h1 class="auth__titulo auth__titulo--desktop">Acesse sua conta</h1>
+
+        <form class="auth__form" id="form-login" method="post" novalidate>
+          <div class="campo">
+            <label class="campo__rotulo" for="login-email">Login</label>
+            <input class="campo__entrada" type="email" id="login-email" name="email"
+                   placeholder="digite seu e-mail..." autocomplete="username">
+          </div>
+
+          <div class="campo">
+            <label class="campo__rotulo" for="login-senha">Senha</label>
+            <div class="campo__senha">
+              <input class="campo__entrada" type="password" id="login-senha" name="senha"
+                     placeholder="••••••••" autocomplete="current-password">
+              <button type="button" class="campo__olho"></button>
+            </div>
+            <p class="campo__erro" id="login-erro" role="alert" hidden></p>
+          </div>
+
+          <button type="submit" class="botao botao--primario">Entrar</button>
+        </form>
+
+        <div class="auth__links">
+          <p>Ainda não participa do MIGUFU?
+            <button type="button" class="auth__link" id="abrir-perfis">Cadastre-se aqui.</button>
+          </p>
+          <p>Esqueceu sua senha?
+            <a class="auth__link" href="recuperar-senha.html">Clique aqui.</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal: Escolha seu perfil -->
+  <dialog class="modal" id="modal-perfil" aria-labelledby="modal-perfil-titulo">
+    <button type="button" class="modal__fechar" id="fechar-perfis" aria-label="Fechar">
+      <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    </button>
+    <h2 class="modal__titulo" id="modal-perfil-titulo">Escolha seu perfil</h2>
+    <div class="modal__acoes">
+      <a class="botao botao--primario" href="cadastro-voluntario.html">Quero ser voluntário</a>
+      <a class="botao botao--secundario" href="cadastro-estudante.html">Sou estudante internacional</a>
+    </div>
+  </dialog>
+
+  <script src="../components/campo-senha.js"></script>
+  <script src="../js/auth-mock.js"></script>
+  <script src="../js/login.js"></script>
+</body>
+</html>
