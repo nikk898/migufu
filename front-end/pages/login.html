@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/paginas/login.css">
+    <title>Login | MIGUFU</title>
+</head>
+<body class="pagina-login">
+
+    <main class="login">
+        <div class="login__logo">
+            <img src="../imgs/Logo MIGUFU 1.png" alt="MIGUFU">
+        </div>
+
+        <form class="login__form">
+            <div class="form-campo">
+                <label class="form-campo__label body" for="email">Login</label>
+                <input class="form-campo__input body" type="email" id="email" name="email" placeholder="digite seu e-mail..." required>
+            </div>
+
+            <div class="form-campo">
+                <label class="form-campo__label body" for="senha">Senha</label>
+                <div class="form-campo__senha">
+                    <input class="form-campo__input body" type="password" id="senha" name="senha" placeholder="••••••••" required>
+                    <button type="button" class="form-campo__botao-olho" aria-label="Mostrar senha" onclick="alternarSenha()">
+                        <img src="../imgs/Eye.png" alt="">
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn--primario body">ENTRAR</button>
+
+            <div class="login__links body">
+                <p>Ainda não participa do MIGUFU? <a href="cadastro.html">Cadastre-se aqui.</a></p>
+                <p><a href="#" onclick="mostrarRecuperacao(event)">Esqueceu sua senha? Clique aqui.</a></p>
+            </div>
+        </form>
+
+        <!-- Recuperação de senha -->
+        <section class="recuperacao" id="recuperacao" hidden>
+            <div class="recuperacao__voltar">
+                <button type="button" aria-label="Voltar" onclick="mostrarLogin()">
+                    <img src="../imgs/Arrowleft.png" alt="">
+                </button>
+            </div>
+
+            <div class="recuperacao__logo">
+                <img src="../imgs/Logo MIGUFU 1.png" alt="MIGUFU">
+            </div>
+
+            <h1>Esqueceu a senha?</h1>
+            <p class="body recuperacao__descricao">
+                Digite seu e-mail cadastrado e enviaremos as instruções para você redefinir sua senha.
+            </p>
+
+            <form class="recuperacao__form" onsubmit="enviarRecuperacao(event)">
+                <div class="form-campo">
+                    <label class="form-campo__label body" for="email-recuperacao">Digite o e-mail cadastrado</label>
+                    <input class="form-campo__input body" type="email" id="email-recuperacao" placeholder="exemplo@email.com" required>
+                </div>
+
+                <button type="submit" class="btn btn--primario body">ENVIAR</button>
+                <a href="#" class="recuperacao__login body" onclick="voltarLogin(event)">Voltar para o Login</a>
+            </form>
+        </section>        
+    </main>
+
+    <script>
+        function alternarSenha() {
+            const campo = document.getElementById("senha");
+            const botao = document.querySelector(".form-campo__botao-olho");
+            const mostrar = campo.type === "password";
+
+            campo.type = mostrar ? "text" : "password";
+            botao.setAttribute("aria-label", mostrar ? "Ocultar senha" : "Mostrar senha");
+        }
+        function mostrarRecuperacao(event) {
+            event.preventDefault();
+
+            document.querySelector(".login__logo").hidden = true;
+            document.querySelector(".login__form").hidden = true;
+            document.getElementById("recuperacao").hidden = false;
+        }
+
+        function mostrarLogin() {
+            document.getElementById("recuperacao").hidden = true;
+            document.querySelector(".login__logo").hidden = false;
+            document.querySelector(".login__form").hidden = false;
+        }
+
+        function voltarLogin(event) {
+            event.preventDefault();
+            mostrarLogin();
+        }
+
+        function enviarRecuperacao(event) {
+            event.preventDefault();
+
+            const email = document.getElementById("email-recuperacao").value;
+
+            // Aqui você chamará a API do backend para enviar o e-mail.
+            console.log("Solicitação de recuperação para:", email);
+        }
+    </script>
+
+</body>
+</html>

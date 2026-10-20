@@ -1,0 +1,183 @@
+/* ===== TELA DE LOGIN ===== */
+
+.pagina-login {
+    min-height: 100vh;
+    margin: 0;
+    background-color: #D9E6F2;
+}
+
+.login {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: 40px 24px;
+}
+
+/* Logo */
+.login__logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto 0 40px;
+}
+
+.login__logo img {
+    display: block;
+    width: 100%;
+    max-width: 180px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Formulário */
+.login__form {
+    width: 100%;
+    margin: 0 auto auto;
+}
+
+.login__form .form-campo {
+    margin-bottom: 14px;
+}
+
+/* Botão entrar */
+.login__form .btn {
+    min-height: 48px;
+    margin-top: 2px;
+}
+
+/* Links */
+.login__links {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 22px;
+}
+
+.login__links p {
+    margin: 0 0 4px;
+}
+
+.login__links a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+/* Recuperação de senha */
+.recuperacao[hidden] {
+    display: none;
+}
+
+.recuperacao {
+    width: 100%;
+}
+
+.recuperacao__voltar button {
+    display: flex;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.recuperacao__voltar img {
+    width: 32px;
+    height: 32px;
+}
+
+.recuperacao__logo {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0 40px;
+}
+
+.recuperacao__logo img {
+    width: 120px;
+    height: auto;
+    object-fit: contain;
+}
+
+.recuperacao h1 {
+    margin: 0 0 10px;
+    font-family: 'Geologica', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    text-align: center;
+}
+
+.recuperacao__descricao {
+    margin: 0 0 30px;
+    text-align: center;
+}
+
+.recuperacao__form .form-campo {
+    margin-bottom: 16px;
+}
+
+.recuperacao__form .btn {
+    min-height: 48px;
+}
+
+.recuperacao__login {
+    display: block;
+    margin-top: 16px;
+    color: #20263A;
+    text-align: center;
+    text-decoration: underline;
+}
+
+.recuperacao__form {
+    width: 100%;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+
+/* Tablet */
+@media (min-width: 769px) {
+    .login {
+        padding: 40px;
+    }
+
+    .login__logo img {
+        max-width: 210px;
+    }
+
+    .login__form {
+        max-width: 420px;
+    }
+    .recuperacao {
+        max-width: 420px;
+        margin: 0 auto;
+    }
+
+    .recuperacao__logo img {
+        width: 150px;
+    }
+}
+
+
+/* Computador */
+@media (min-width: 1025px) {
+    .login {
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+    }
+
+    .login__logo {
+        margin: 0 0 40px;
+    }
+
+    .login__logo img {
+        max-width: 220px;
+    }
+
+    .login__form {
+        max-width: 400px;
+        margin: 0;
+    }
+}

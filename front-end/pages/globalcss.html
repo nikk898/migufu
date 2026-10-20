@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/global.css">
+    <title>Document</title>
+</head>
+<body>
+    <!-- textos do sistema -->
+    <h1>Texto H1</h1>
+    <h2>Texto H2</h2>
+    <p class="body"> texto do body</p>
+    <p class="legenda">texo de legendas</p>
+
+    <hr>
+    <!-- Input de texto -->
+    <div class="form-campo">
+        <label class="form-campo__label body" for="nome">Nome Completo</label>
+        <input class="form-campo__input body" type="text" id="nome" placeholder="digite seu nome...">
+    </div>
+
+    <!-- Input com mensagem de erro -->
+    <div class="form-campo form-campo--erro">
+        <label class="form-campo__label body" for="cpf">CPF</label>
+        <input class="form-campo__input body" type="text" id="cpf" placeholder="000.000.000-00">
+        <span class="form-campo__mensagem-erro legenda">* CPF inválido ou não encontrado.</span>
+    </div>
+
+    <!-- Select de opções -->
+    <div class="form-campo">
+        <label class="form-campo__label body" for="curso">Curso</label>
+        <select class="form-campo__select body" id="curso" name="curso" required>
+            <option value="" selected disabled>Selecione seu curso...</option>
+            <option value="sistemas-informacao">Sistemas de Informação</option>
+            <option value="ciencia-computacao">Ciência da Computação</option>
+            <option value="engenharia-computacao">Engenharia de Computação</option>
+        </select>
+    </div>
+
+    <!-- Input de senha com botão de visualizar -->
+    <div class="form-campo">
+        <label class="form-campo__label body" for="senha">Senha</label>
+        <div class="form-campo__senha">
+            <input class="form-campo__input body" type="password" id="senha" name="senha" placeholder="Digite sua senha..." required>
+            <button type="button" class="form-campo__botao-olho" aria-label="Mostrar senha" onclick="alternarSenha()">
+                <img src="../imgs/Eye.png" alt="">
+            </button>
+        </div>
+    </div>
+
+    <hr>
+
+    <button type="submit" class="btn btn--primario body">ENVIAR</button>
+
+    <br>
+
+    <button type="button" class="btn btn--secundario body">ENVIAR</button>
+
+    <br>
+
+    <button type="button" class="btn btn--contorno body">CANCELAR</button>
+
+    <br>
+
+    <button type="button" class="btn btn--perigo body">EXCLUIR</button>
+
+    <br>
+
+    <button type="button body" class="btn btn--primario body">ANEXAR CERTIFICADO (PDF)
+    <img class="btn__icone" src="../imgs/Upload cloud.png" alt="">
+    </button>
+
+</body>
+</html>
