@@ -1,0 +1,139 @@
+.card-assoc-est__lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 320px));
+  gap: var(--esp-4);
+  margin: var(--esp-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card-assoc-est {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: var(--cor-fundo-02);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+
+.card-assoc-est__topo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 32px; /* Espaço para o ícone de ação */
+}
+
+.card-assoc-est__avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background-color: #d0d5dd;
+  color: #101828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.card-assoc-est__nome {
+  margin: 0;
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #000000;
+}
+
+.card-assoc-est__btn-vinc {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color: #076eb8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-assoc-est__btn-vinc:hover {
+  opacity: 0.8;
+}
+
+.card-assoc-est__icone-plus {
+  width: 28px;
+  height: 28px;
+  fill: #076eb8;
+}
+
+.card-assoc-est__corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-assoc-est__linha {
+  margin: 0;
+  font-size: 13px;
+  line-height: 18px;
+  color: #101828;
+}
+
+.card-assoc-est__linha strong {
+  font-weight: 700;
+}
+
+.card-assoc-est__rodape {
+  margin-top: 4px;
+}
+
+/* Chips de Vínculo */
+.chip-vinculo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.chip-vinculo__ponto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* Com Vínculo (Cinza) */
+.chip-vinculo--com {
+  background-color: #d0d5dd;
+  color: #101828;
+}
+
+.chip-vinculo--com .chip-vinculo__ponto {
+  background-color: #344054;
+}
+
+/* Sem Vínculo (Rosa/Vermelho Claro) */
+.chip-vinculo--sem {
+  background-color: #fecdca;
+  color: #912018;
+}
+
+.chip-vinculo--sem .chip-vinculo__ponto {
+  background-color: #f04438;
+}
+
+.card-assoc-est__vazio {
+  grid-column: 1 / -1;
+  padding: var(--esp-5);
+  text-align: center;
+  color: var(--cor-apoio);
+}

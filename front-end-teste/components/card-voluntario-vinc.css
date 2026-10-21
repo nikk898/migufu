@@ -1,0 +1,30 @@
+.card-vol-vinc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.card-vol-vinc.is-selecionado {
+  border-color: var(--cor-primaria);
+}
+
+.card-vol-vinc__cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+}
+
+.card-vol-vinc__corpo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+}
+
+.card-vol-vinc__btn {
+  width: 100%;
+  margin-top: var(--esp-2);
+}
