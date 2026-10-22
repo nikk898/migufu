@@ -85,9 +85,19 @@
 
             <div class="campo">
               <label class="campo__rotulo" for="vinculo">Qual seu vínculo com a UFU?</label>
-              <select class="campo__entrada" id="vinculo" name="vinculo" data-opcoes="vinculos" data-padrao="estudante" required aria-describedby="erro-vinculo">
-                <option value="" disabled selected hidden>Selecione...</option>
-              </select>
+                <select
+                  class="campo__entrada"
+                  id="vinculo"
+                  name="vinculo"
+                  required
+                  disabled>
+                  <option value="estudante" selected>Estudante</option>
+                </select>
+                <input
+                  type="hidden"
+                  name="vinculo"
+                  value="estudante"
+                >
               <p class="campo__erro" id="erro-vinculo" role="alert" hidden></p>
             </div>
 

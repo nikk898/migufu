@@ -211,3 +211,71 @@ select.campo__entrada:has(option[value=""]:checked) {
     padding: var(--esp-5) var(--esp-4);
   }
 }
+
+/* Agrupamentos exibidos conforme o vínculo institucional. */
+.cadastro__campos-condicionais:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+
+/* ==================================================
+   Ajustes de apresentação do cadastro
+   ================================================== */
+
+/* Campo de biografia */
+.cadastro__bio {
+  min-height: 144px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.cadastro__ajuda {
+  font-size: var(--fs-legenda);
+  line-height: var(--lh-legenda);
+  color: var(--cor-apoio);
+}
+
+/* ==================================================
+   Layout Desktop - Padronização com a navbar
+   ================================================== */
+
+@media (min-width: 900px) {
+
+  .cadastro__lateral {
+    flex: 0 0 var(--navbar-largura);
+    width: var(--navbar-largura);
+    background: var(--cor-fundo-02);
+    border-right: var(--borda-apoio);
+  }
+
+  /* Mesmo alinhamento da marca do administrador */
+  .cadastro__lateral .cadastro__marca {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    height: auto;
+    padding: var(--esp-3) var(--esp-4);
+    border-bottom: none;
+  }
+
+  .cadastro__lateral .cadastro__logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .cadastro__lateral .cadastro__logo-texto {
+    width: 120px;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .cadastro__principal {
+    flex: 1;
+    min-width: 0;
+  }
+}

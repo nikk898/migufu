@@ -50,6 +50,14 @@
             </div>
 
             <div class="campo">
+              <label class="campo__rotulo" for="genero">Gênero</label>
+              <select class="campo__entrada" id="genero" name="genero" data-opcoes="generos" required aria-describedby="erro-genero">
+                <option value="" disabled selected hidden>Selecione...</option>
+              </select>
+              <p class="campo__erro" id="erro-genero" role="alert" hidden></p>
+            </div>
+
+            <div class="campo">
               <label class="campo__rotulo" for="documento">CPF/Passaporte</label>
               <input class="campo__entrada" type="text" id="documento" name="documento" placeholder="XXX.XXX.XXX-XX"
                      autocomplete="off" data-validar="documento" required aria-describedby="erro-documento">
@@ -82,6 +90,34 @@
               </select>
               <p class="campo__erro" id="erro-vinculo" role="alert" hidden></p>
             </div>
+            <!-- Campos exclusivos do voluntário estudante -->
+            <div class="cadastro__campos-condicionais" id="campos-estudante" hidden>
+              <div class="campo">
+                <label class="campo__rotulo" for="curso">Qual curso você faz na UFU?</label>
+                <select class="campo__entrada" id="curso" name="curso" data-opcoes="cursos" required aria-describedby="erro-curso">
+                  <option value="" disabled selected hidden>Selecione o curso...</option>
+                </select>
+                <p class="campo__erro" id="erro-curso" role="alert" hidden></p>
+              </div>
+              <div class="campo">
+                <label class="campo__rotulo" for="periodo">Qual período?</label>
+                <select class="campo__entrada" id="periodo" name="periodo" data-opcoes="periodos" required aria-describedby="erro-periodo">
+                  <option value="" disabled selected hidden>Selecione o período...</option>
+                </select>
+                <p class="campo__erro" id="erro-periodo" role="alert" hidden></p>
+              </div>
+            </div>
+
+            <!-- Campo compartilhado entre estudante e funcionário -->
+            <div class="cadastro__campos-condicionais" id="campos-campus" hidden>
+              <div class="campo">
+                <label class="campo__rotulo" for="campus">Qual campus você tem aulas/trabalha?</label>
+                <select class="campo__entrada" id="campus" name="campus" data-opcoes="campus" required aria-describedby="erro-campus">
+                  <option value="" disabled selected hidden>Selecione o campus...</option>
+                </select>
+                <p class="campo__erro" id="erro-campus" role="alert" hidden></p>
+              </div>
+            </div>
             <!-- fim: Vínculo Institucional -->
           </fieldset>
 
@@ -100,6 +136,31 @@
           <fieldset class="cadastro__secao">
             <legend class="subtitulo">Selecione seus interesses</legend>
             <div class="cadastro__interesses" id="lista-interesses"></div>
+          </fieldset>
+
+          <fieldset class="cadastro__secao">
+            <legend class="subtitulo">Sobre mim</legend>
+
+            <div class="campo">
+              <label class="campo__rotulo" for="bio">
+                Conte um pouco sobre você
+              </label>
+
+              <textarea
+                class="campo__entrada cadastro__bio"
+                id="bio"
+                name="bio"
+                placeholder="Fale um pouco sobre você, seus hobbies, sua personalidade e o que gosta de fazer..."
+                maxlength="500"
+                rows="5"
+                aria-describedby="bio-ajuda"
+              ></textarea>
+
+              <p class="cadastro__ajuda" id="bio-ajuda">
+                Essa apresentação poderá aparecer no seu perfil.
+                Máximo de 500 caracteres.
+              </p>
+            </div>
           </fieldset>
 
           <div class="campo">
