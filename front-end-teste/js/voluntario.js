@@ -32,6 +32,16 @@
         telefone: "5500000000000", // exemplo (inválido de propósito)
         email: "contato@exemplo.com", // exemplo
       },
+      {
+        nome: "Sofia Rodriguez",
+        curso: "Relações Internacionais",
+        pais: "Argentina",
+        idiomas: "Espanhol (Nativo), Português (Intermediário)",
+        interesses: "Música, cinema, viagens, leitura",
+        bio: "Olá! Sou a Sofia, estudante de intercâmbio na UFU. Gosto de conhecer pessoas, explorar a cidade, ouvir música e fazer novas amizades.",
+        telefone: "",
+        email: "sofia@example.com",
+      },
     ],
   };
 
@@ -71,7 +81,26 @@
   function cardMigufu(m) {
     var card = criar("article", "card migufu");
     card.appendChild(criar("h3", "subtitulo", "Meu MIGUFU"));
-    card.appendChild(criar("p", "migufu__nome", m.nome));
+
+    // Cria as iniciais a partir do nome
+    var partes = (m.nome || "").trim().split(/\s+/);
+
+    var iniciais =
+      partes.length > 1
+        ? (partes[0][0] + partes[partes.length - 1][0]).toUpperCase()
+        : (partes[0] || "?").slice(0, 2).toUpperCase();
+
+    // Avatar e nome lado a lado
+    var perfil = criar("div", "migufu__perfil");
+
+    var avatar = criar("span", "migufu__avatar", iniciais);
+    avatar.setAttribute("aria-hidden", "true");
+
+    perfil.appendChild(avatar);
+    perfil.appendChild(criar("p", "migufu__nome", m.nome));
+
+    card.appendChild(perfil);
+
     card.appendChild(linhaInfo("Curso", m.curso));
     card.appendChild(linhaInfo("País de origem", m.pais));
     card.appendChild(linhaInfo("Idiomas", m.idiomas));
@@ -81,10 +110,20 @@
     var botoes = criar("div", "migufu__botoes");
     var numero = (m.telefone || "").replace(/\D/g, "");
     botoes.appendChild(
-      botaoLink("botao--primario", "chat", "Entrar em contato (WhatsApp)", numero ? "https://wa.me/" + numero : "")
+      botaoLink(
+        "botao--primario",
+        "whatsapp",
+        "Entrar em contato (WhatsApp)",
+        numero ? "https://wa.me/" + numero : "",
+      ),
     );
     botoes.appendChild(
-      botaoLink("botao--secundario", "email", "Enviar e-mail", m.email ? "mailto:" + m.email : "")
+      botaoLink(
+        "botao--secundario",
+        "email",
+        "Enviar e-mail",
+        m.email ? "mailto:" + m.email : "",
+      ),
     );
     card.appendChild(botoes);
     return card;
@@ -97,28 +136,60 @@
     el.hidden = !texto;
   }
 
-  function configurarAcao() {
+  function configurarAcao(dados) {
     var entrada = document.getElementById("arquivo-certificado");
+    var enviar = campo("enviar");
+
+    // Abre o seletor de arquivos.
     campo("anexar").addEventListener("click", function () {
       entrada.click();
     });
 
+    // Verifica o arquivo escolhido.
     entrada.addEventListener("change", function () {
       var arquivo = entrada.files[0];
-      if (!arquivo) return;
 
-      var ehPdf = arquivo.type === "application/pdf" || /\.pdf$/i.test(arquivo.name);
+      enviar.disabled = true;
+
+      if (!arquivo) {
+        mostrarMensagem("", false);
+        return;
+      }
+
+      var ehPdf =
+        arquivo.type === "application/pdf" || /\.pdf$/i.test(arquivo.name);
+
       if (!ehPdf) {
         entrada.value = "";
         mostrarMensagem("Selecione um arquivo no formato PDF.", true);
         return;
       }
 
-      // TODO: enviar o arquivo ao back-end e atualizar o status do voluntário
-      mostrarMensagem("Certificado selecionado: " + arquivo.name, false);
+      enviar.disabled = false;
+
+      mostrarMensagem("Arquivo selecionado: " + arquivo.name, false);
     });
 
+    // Simula o envio para análise.
+    enviar.addEventListener("click", function () {
+      if (!entrada.files[0]) {
+        mostrarMensagem("Escolha o certificado antes de continuar.", true);
+        return;
+      }
+
+      // TODO: substituir pela chamada real ao back-end.
+      dados.status = "em_analise";
+
+      entrada.value = "";
+      enviar.disabled = true;
+
+      mostrarMensagem("", false);
+      preencherTela(dados);
+    });
+
+    // Mantém o comportamento existente do Moodle.
     var moodle = campo("moodle");
+
     if (URL_MOODLE) {
       moodle.href = URL_MOODLE;
     } else {
@@ -133,12 +204,37 @@
     campo("nome").textContent = dados.nome;
 
     var apto = dados.status === "apto";
-    var chip = campo("chip");
-    chip.classList.toggle("chip--sucesso", apto);
-    chip.classList.toggle("chip--pendente", !apto);
-    campo("chip-texto").textContent = apto ? "Apto" : "Pendente";
+    var reprovado = dados.status === "reprovado";
+    var emAnalise = dados.status === "em_analise";
 
-    campo("acao").hidden = apto;
+    // Atualiza a cor do status.
+    var chip = campo("chip");
+
+    chip.classList.toggle("chip--sucesso", apto);
+    chip.classList.toggle("chip--erro", reprovado);
+    chip.classList.toggle("chip--pendente", !apto && !reprovado);
+
+    // Atualiza o texto do status.
+    campo("chip-texto").textContent = apto
+      ? "Apto"
+      : reprovado
+        ? "Reprovado"
+        : emAnalise
+          ? "Em análise"
+          : "Pendente";
+
+    // Mostra ou esconde as seções.
+    campo("acao").hidden = apto || emAnalise;
+    campo("analise").hidden = !emAnalise;
+
+    // Ajusta a orientação em caso de reprovação.
+    document.getElementById("titulo-acao").textContent = reprovado
+      ? "Certificado reprovado — envie novamente"
+      : "Ação Necessária";
+
+    campo("orientacao").textContent = reprovado
+      ? "Seu certificado não foi aprovado. Revise o arquivo e envie um novo PDF para análise."
+      : "Para participar do programa, realize o treinamento obrigatório e envie o certificado.";
 
     var lista = campo("lista");
     lista.textContent = "";
@@ -159,9 +255,12 @@
 
     var estado = new URLSearchParams(window.location.search).get("estado");
     var dados = Object.assign({}, dadosExemplo);
-    if (estado === "apto" || estado === "pendente") dados.status = estado;
 
-    configurarAcao();
+    if (["apto", "pendente", "reprovado", "em_analise"].includes(estado)) {
+      dados.status = estado;
+    }
+
+    configurarAcao(dados);
     preencherTela(dados);
   });
 })();

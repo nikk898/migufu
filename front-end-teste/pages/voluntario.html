@@ -1,71 +1,141 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MIGUFU - Início do Voluntário</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MIGUFU - Início do Voluntário</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../components/navbar.css">
-  <link rel="stylesheet" href="../css/paginas/voluntario.css">
-</head>
-<body>
-  <!-- Navbar reutilizável (components/navbar.js), variante "app" -->
-  <div id="navbar"></div>
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../components/navbar.css" />
+    <link rel="stylesheet" href="../css/paginas/voluntario.css" />
+  </head>
+  <body>
+    <!-- Navbar reutilizável (components/navbar.js), variante "app" -->
+    <div id="navbar"></div>
 
-  <main class="conteudo">
-    <div class="coluna">
-      <header>
-        <h1 class="titulo-principal">Olá, <span data-vol="nome">João</span>!</h1>
-        <span class="chip" data-vol="chip">
-          <span class="chip__ponto" aria-hidden="true"></span>
-          <span data-vol="chip-texto">Pendente</span>
-        </span>
-      </header>
+    <main class="conteudo">
+      <div class="coluna vol__pagina">
+        <header>
+          <h1 class="titulo-principal">
+            Olá, <span data-vol="nome">João</span>!
+          </h1>
+          <span class="chip" data-vol="chip">
+            <span class="chip__ponto" aria-hidden="true"></span>
+            <span data-vol="chip-texto">Pendente</span>
+          </span>
+        </header>
 
-      <!-- Só aparece enquanto o voluntário está com o status "Pendente" -->
-      <section class="card vol__acao" data-vol="acao" aria-labelledby="titulo-acao" hidden>
-        <h2 class="subtitulo" id="titulo-acao">Ação Necessária</h2>
-        <p class="texto">
-          Para participar do programa, você precisa realizar o treinamento obrigatório e enviar o certificado.
-        </p>
-
-        <div class="vol__botoes">
-          <input type="file" id="arquivo-certificado" accept="application/pdf,.pdf" hidden>
-          <button type="button" class="botao botao--primario botao--bloco" data-vol="anexar">
-            Anexar certificado (PDF)
-            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3zM8 13h2.55v3h2.9v-3H16l-4-4z"/></svg>
-          </button>
-          <a class="botao botao--secundario botao--bloco" href="#" target="_blank" rel="noopener" data-vol="moodle">
-            Acessar curso no Moodle
-          </a>
-        </div>
-        <p class="legenda vol__mensagem" role="status" data-vol="mensagem" hidden></p>
-      </section>
-
-      <section class="vol__secao" aria-labelledby="titulo-migufus">
-        <h2 class="subtitulo" id="titulo-migufus">Meus Migufus</h2>
-
-        <!-- Sem estudantes vinculados -->
-        <div class="vol__vazio" data-vol="vazio">
-          <svg class="icone vol__vazio-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85-.85-.37-1.79-.58-2.78-.58-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"/></svg>
-          <p class="texto">
-            Você ainda não possui estudantes internacionais vinculados. Aguarde a validação do administrador.
+        <!-- Só aparece enquanto o voluntário está com o status "Pendente" -->
+        <section
+          class="card vol__acao"
+          data-vol="acao"
+          aria-labelledby="titulo-acao"
+          hidden
+        >
+          <h2 class="subtitulo" id="titulo-acao">Ação Necessária</h2>
+          <p class="texto" data-vol="orientacao">
+            Para participar do programa, você precisa realizar o treinamento
+            obrigatório e enviar o certificado.
           </p>
-        </div>
 
-        <!-- Cards dos estudantes vinculados (renderizados pelo voluntario.js) -->
-        <div class="vol__lista" data-vol="lista" hidden></div>
-      </section>
-    </div>
-  </main>
+          <div class="vol__botoes">
+            <input
+              type="file"
+              id="arquivo-certificado"
+              accept="application/pdf,.pdf"
+              hidden
+            />
+            <button
+              type="button"
+              class="botao botao--primario botao--bloco"
+              data-vol="anexar"
+            >
+              Anexar certificado (PDF)
+              <svg
+                class="icone"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3zM8 13h2.55v3h2.9v-3H16l-4-4z"
+                />
+              </svg>
+            </button>
+            <a
+              class="botao botao--secundario botao--bloco"
+              href="#"
+              target="_blank"
+              rel="noopener"
+              data-vol="moodle"
+            >
+              Acessar curso no Moodle
+            </a>
+            <button
+              type="button"
+              class="botao botao--primario botao--bloco"
+              data-vol="enviar"
+              disabled
+            >
+              Enviar certificado para análise
+            </button>
+          </div>
+          <p
+            class="legenda vol__mensagem"
+            role="status"
+            data-vol="mensagem"
+            hidden
+          ></p>
+        </section>
 
-  <script src="../components/icones.js"></script>
-  <script src="../components/navbar.js"></script>
-  <script src="../js/voluntario.js"></script>
-</body>
+        <!-- Estado: certificado aguardando avaliação -->
+        <section
+          class="card vol__acao"
+          data-vol="analise"
+          aria-labelledby="titulo-analise"
+          hidden
+        >
+          <h2 class="subtitulo" id="titulo-analise">Certificado em análise</h2>
+
+          <p class="texto">Seu certificado está aguardando avaliação.</p>
+        </section>
+
+        <section class="vol__secao" aria-labelledby="titulo-migufus">
+          <h2 class="subtitulo" id="titulo-migufus">Meus Migufus</h2>
+
+          <!-- Sem estudantes vinculados -->
+          <div class="vol__vazio" data-vol="vazio">
+            <svg
+              class="icone vol__vazio-icone"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85-.85-.37-1.79-.58-2.78-.58-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"
+              />
+            </svg>
+            <p class="texto">
+              Você ainda não possui estudantes internacionais vinculados.
+              Aguarde a validação do administrador.
+            </p>
+          </div>
+
+          <!-- Cards dos estudantes vinculados (renderizados pelo voluntario.js) -->
+          <div class="vol__lista" data-vol="lista" hidden></div>
+        </section>
+      </div>
+    </main>
+
+    <script src="../components/icones.js"></script>
+    <script src="../components/navbar.js"></script>
+    <script src="../js/voluntario.js"></script>
+  </body>
 </html>

@@ -1,0 +1,146 @@
+/* Estudante internacional - estilos exclusivos da home */
+
+/* Libera espaço para dois ou mais cards no desktop. */
+.coluna.estudante__pagina {
+  max-width: none;
+}
+
+/* No celular: nome e idioma na primeira linha; status abaixo. */
+.estudante__cabecalho {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "saudacao idioma"
+    "status status";
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 12px;
+}
+
+.estudante__saudacao {
+  grid-area: saudacao;
+}
+
+.estudante__idioma {
+  grid-area: idioma;
+  justify-self: end;
+}
+
+.estudante__idioma select {
+  height: 36px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--raio);
+  background: var(--cor-fundo-02);
+  color: var(--cor-primaria);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--sombra-card);
+  cursor: pointer;
+}
+
+.estudante__status {
+  grid-area: status;
+  justify-self: start;
+}
+
+.estudante__status.chip--sucesso {
+  background: #b6dfc7;
+}
+
+.estudante__status.chip--pendente {
+  background: #fff0c2;
+  border-color: #e4bd47;
+}
+
+/* Estado sem voluntário: ícone e mensagem centralizados. */
+.estudante__vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--esp-2);
+  max-width: 330px;
+  margin-inline: auto;
+  padding: var(--esp-4) var(--esp-2);
+  text-align: center;
+}
+
+.estudante__vazio-icone {
+  width: 40px;
+  height: 40px;
+}
+
+/* Reaproveita o card MIGUFU com quebra automática de linha. */
+.estudante__lista {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--esp-3);
+}
+
+.estudante__lista .migufu {
+  flex: 0 1 320px;
+  width: 100%;
+  min-width: 0;
+  max-width: 320px;
+}
+
+.estudante__lista .migufu__perfil {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+}
+
+.estudante__lista .migufu__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #dedede;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.estudante__lista .migufu__nome {
+  margin: 0;
+  text-align: left;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 700;
+}
+
+.estudante__lista .migufu .texto {
+  font-size: 13px;
+  line-height: 19px;
+  overflow-wrap: anywhere;
+}
+
+.estudante__lista .migufu__botoes .botao {
+  width: 100%;
+  max-width: none;
+  min-height: 44px;
+  height: auto;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+@media (min-width: 900px) {
+  /* No desktop, idioma em cima, saudação e status lado a lado. */
+  .estudante__cabecalho {
+    grid-template-columns: max-content max-content;
+    grid-template-areas:
+      "idioma idioma"
+      "saudacao status";
+    column-gap: var(--esp-3);
+    row-gap: var(--esp-3);
+  }
+
+  .estudante__idioma {
+    justify-self: start;
+  }
+}

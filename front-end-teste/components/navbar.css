@@ -240,3 +240,36 @@
     display: inline;
   }
 }
+
+/* ==================================================
+   Botão Sair - Voluntário e Estudante Internacional
+   ================================================== */
+
+/* Mobile */
+.navbar--app .navbar__sair {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  padding: 0;
+  color: var(--cor-status-02);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.navbar--app .navbar__sair .navbar__icone {
+  width: 24px;
+  height: 24px;
+}
+
+/* Desktop */
+@media (min-width: 900px) {
+  .navbar--app .navbar__sair {
+    margin-top: auto;
+    margin-left: 0;
+    padding: 0 var(--esp-3);
+    gap: var(--esp-3);
+    font-size: 14px;
+    font-weight: 400;
+  }
+}

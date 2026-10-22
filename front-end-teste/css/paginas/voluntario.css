@@ -56,34 +56,88 @@
   height: 40px;
 }
 
+/* Lista de MIGUFUS */
+
+/* Área principal pode ocupar o espaço disponível */
+.coluna.vol__pagina {
+  max-width: none;
+}
+
+/* Cards organizados automaticamente */
 .vol__lista {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
   gap: var(--esp-3);
 }
 
-/* Card de estudante vinculado */
+/* Card individual */
 .migufu {
   display: flex;
   flex-direction: column;
   gap: var(--esp-2);
-  padding: var(--esp-3) var(--esp-3) var(--esp-4);
+  width: 100%;
+  max-width: 320px;
+  padding: var(--esp-3);
+}
+
+/* Avatar e nome */
+.migufu__perfil {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  margin-bottom: var(--esp-2);
+}
+
+.migufu__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+
+  background-color: #dedede;
+  color: var(--cor-texto-01);
+
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .migufu__nome {
-  margin-bottom: var(--esp-2);
-  text-align: center;
-  font-size: var(--fs-h2);
-  line-height: var(--lh-h2);
-  font-weight: 600;
+  margin: 0;
+  text-align: left;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 700;
 }
 
+/* Informações pessoais */
+.migufu .texto {
+  font-size: 13px;
+  line-height: 19px;
+  overflow-wrap: anywhere;
+}
+
+/* Botões de contato */
 .migufu__botoes {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 12px;
   margin-top: var(--esp-3);
+}
+
+.migufu__botoes .botao {
+  width: 100%;
+  max-width: none;
+  min-height: 44px;
+  height: auto;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 16px;
 }
 
 .migufu__botoes .botao[aria-disabled="true"] {
