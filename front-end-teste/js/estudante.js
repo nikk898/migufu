@@ -7,6 +7,7 @@
     nome: "Jean Martin",
     voluntarios: [
       {
+        id: "vol-joao",
         nome: "João Silva",
         curso: "Sistemas de Informação",
         idiomas: "Português (Nativo), Inglês (Intermediário)",
@@ -16,6 +17,7 @@
         email: "joao.silva@example.com",
       },
       {
+        id: "vol-mariana",
         nome: "Mariana Oliveira",
         curso: "Psicologia",
         idiomas: "Português (Nativo), Espanhol (Intermediário)",
@@ -77,6 +79,23 @@
       email: "Enviar correo",
       indisponivel: "Datos de contacto no disponibles",
     },
+
+    fr: {
+      ola: "Bonjour",
+      titulo: "Mes Migufus",
+      vinculado: "MIGUFU trouvé !",
+      aguardando: "En attente d'un MIGUFU",
+      vazio:
+        "Vous n'avez pas encore de MIGUFU associé. Veuillez attendre la validation d'un administrateur.",
+      mentor: "Mon MIGUFU (Mentor)",
+      curso: "Formation",
+      idiomas: "Langues",
+      interesses: "Centres d'intérêt",
+      bio: "Bio",
+      whatsapp: "Contacter sur WhatsApp",
+      email: "Envoyer un e-mail",
+      indisponivel: "Coordonnées non disponibles",
+    },
   };
 
   function criar(tag, classe, texto) {
@@ -134,8 +153,33 @@
     const perfil = criar("div", "migufu__perfil");
     const avatar = criar("span", "migufu__avatar", iniciais(pessoa.nome));
     avatar.setAttribute("aria-hidden", "true");
-    perfil.appendChild(avatar);
-    perfil.appendChild(criar("p", "migufu__nome", pessoa.nome));
+
+    const link = criar("a", "migufu__link-perfil");
+
+    link.href = PerfilPublico.url(pessoa.id, "estudante");
+
+    const verPerfil = {
+      pt: "Ver perfil de",
+      en: "View profile of",
+      es: "Ver el perfil de",
+      fr: "Voir le profil de",
+    };
+
+    const idiomaAtual = document.getElementById("idioma-interface").value;
+
+    link.setAttribute(
+      "aria-label",
+      (verPerfil[idiomaAtual] || verPerfil.pt) + " " + pessoa.nome,
+    );
+
+    link.addEventListener("click", () => {
+      PerfilPublico.guardar(pessoa, "voluntario");
+    });
+
+    link.append(avatar, criar("span", "migufu__nome", pessoa.nome));
+
+    perfil.appendChild(link);
+
     card.appendChild(perfil);
 
     adicionarInfo(card, t.curso, pessoa.curso);
@@ -181,7 +225,7 @@
     const idioma = document.getElementById("idioma-interface").value;
     const t = traducoes[idioma] || traducoes.pt;
     document.documentElement.lang =
-      { pt: "pt-BR", en: "en", es: "es" }[idioma] || "pt-BR";
+      { pt: "pt-BR", en: "en", es: "es", fr: "fr" }[idioma] || "pt-BR";
 
     document.querySelector(".estudante__saudacao").textContent =
       t.ola + ", " + dadosExemplo.nome + "!";
@@ -208,15 +252,44 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    Navbar.render("#navbar", {
-      variante: "app",
-      itens: Navbar.ITENS_ESTUDANTE,
-      ativo: "inicio",
+    const seletorIdioma = document.getElementById("idioma-interface");
+
+    // Recupera o idioma escolhido anteriormente
+    const idiomaSalvo = I18nEstudante.obter();
+
+    seletorIdioma.value = idiomaSalvo;
+
+    I18nEstudante.aplicarIdiomaDocumento(idiomaSalvo);
+
+    // Renderiza a navbar traduzida
+    function atualizarNavbar() {
+      Navbar.render("#navbar", {
+        variante: "app",
+        itens: I18nEstudante.traduzirMenu(Navbar.ITENS_ESTUDANTE),
+        ativo: "inicio",
+      });
+
+      // Traduz o botão Sair sem alterar o componente compartilhado
+      const textoSair = document.querySelector("#navbar .navbar__sair span");
+
+      if (textoSair) {
+        textoSair.textContent = I18nEstudante.traduzirSair();
+      }
+    }
+
+    atualizarNavbar();
+
+    // Quando o estudante mudar o idioma
+    seletorIdioma.addEventListener("change", function () {
+      const novoIdioma = seletorIdioma.value;
+
+      I18nEstudante.salvar(novoIdioma);
+
+      atualizarNavbar();
+      renderizar();
     });
 
-    document
-      .getElementById("idioma-interface")
-      .addEventListener("change", renderizar);
+    // Monta a tela com o idioma selecionado
     renderizar();
   });
 })();

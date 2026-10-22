@@ -219,7 +219,6 @@ select.campo__entrada:has(option[value=""]:checked) {
   gap: var(--esp-3);
 }
 
-
 /* ==================================================
    Ajustes de apresentação do cadastro
    ================================================== */
@@ -242,7 +241,6 @@ select.campo__entrada:has(option[value=""]:checked) {
    ================================================== */
 
 @media (min-width: 900px) {
-
   .cadastro__lateral {
     flex: 0 0 var(--navbar-largura);
     width: var(--navbar-largura);
@@ -278,4 +276,27 @@ select.campo__entrada:has(option[value=""]:checked) {
     flex: 1;
     min-width: 0;
   }
+}
+
+/* Seletor de idioma - Cadastro do estudante internacional */
+
+body[data-perfil="estudante"] .cadastro__seletor-idioma {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto var(--esp-3);
+}
+
+body[data-perfil="estudante"] .cadastro__seletor-idioma select {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--cor-apoio);
+  border-radius: var(--raio);
+  background: var(--cor-fundo-02);
+  color: var(--cor-primaria);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
 }

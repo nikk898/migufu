@@ -1,46 +1,71 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MIGUFU - Ajuda e Suporte</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MIGUFU - Ajuda e Suporte</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../components/navbar.css">
-  <link rel="stylesheet" href="../css/paginas/ajuda.css">
-</head>
-<body>
-  <!-- Navbar reutilizável (components/navbar.js), variante "app".
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../components/navbar.css" />
+    <link rel="stylesheet" href="../css/paginas/ajuda.css" />
+  </head>
+  <body>
+    <!-- Navbar reutilizável (components/navbar.js), variante "app".
        Serve ao Voluntário (padrão) e ao Estudante Internacional (?perfil=estudante) -->
-  <div id="navbar"></div>
+    <div id="navbar"></div>
 
-  <main class="conteudo">
-    <div class="coluna">
-      <h1 class="titulo-principal">Ajuda e Suporte</h1>
-      <p class="texto ajuda__intro">
-        Tem alguma dúvida, problema ou sugestão? Envie uma mensagem para a nossa equipe de administradores
-      </p>
+    <main class="conteudo">
+      <div class="coluna">
+        <h1 class="titulo-principal">Ajuda e Suporte</h1>
+        <p class="texto ajuda__intro">
+          Tem alguma dúvida, problema ou sugestão? Envie uma mensagem para a
+          nossa equipe de administradores
+        </p>
 
-      <form class="ajuda__form" data-ajuda="form" novalidate>
-        <div class="campo">
-          <label class="campo__rotulo subtitulo ajuda__rotulo" for="mensagem">Como podemos ajudar?</label>
-          <textarea class="campo__entrada" id="mensagem" name="mensagem" maxlength="1000"
-                    placeholder="Escreva aqui a sua mensagem..." aria-describedby="mensagem-erro"></textarea>
-          <p class="campo__erro" id="mensagem-erro" data-ajuda="erro" hidden></p>
-        </div>
+        <form class="ajuda__form" data-ajuda="form" novalidate>
+          <div class="campo">
+            <label class="campo__rotulo subtitulo ajuda__rotulo" for="mensagem"
+              >Como podemos ajudar?</label
+            >
+            <textarea
+              class="campo__entrada"
+              id="mensagem"
+              name="mensagem"
+              maxlength="1000"
+              placeholder="Escreva aqui a sua mensagem..."
+              aria-describedby="mensagem-erro"
+            ></textarea>
+            <p
+              class="campo__erro"
+              id="mensagem-erro"
+              data-ajuda="erro"
+              hidden
+            ></p>
+          </div>
 
-        <button type="submit" class="botao botao--primario ajuda__enviar">Enviar mensagem</button>
-        <p class="texto ajuda__sucesso" role="status" data-ajuda="sucesso" hidden></p>
-      </form>
-    </div>
-  </main>
+          <button type="submit" class="botao botao--primario ajuda__enviar">
+            Enviar mensagem
+          </button>
+          <p
+            class="texto ajuda__sucesso"
+            role="status"
+            data-ajuda="sucesso"
+            hidden
+          ></p>
+        </form>
+      </div>
+    </main>
 
-  <script src="../components/icones.js"></script>
-  <script src="../components/navbar.js"></script>
-  <script src="../js/ajuda.js"></script>
-</body>
+    <script src="../components/icones.js"></script>
+    <script src="../components/navbar.js"></script>
+    <script src="../js/i18n.js"></script>
+    <script src="../js/ajuda.js"></script>
+  </body>
 </html>

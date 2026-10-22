@@ -23,6 +23,7 @@
     status: "pendente", // "pendente" | "apto"
     migufus: [
       {
+        id: "est-jean",
         nome: "Jean Martin",
         curso: "Sistemas de Informação",
         pais: "França",
@@ -33,6 +34,7 @@
         email: "contato@exemplo.com", // exemplo
       },
       {
+        id: "est-sofia",
         nome: "Sofia Rodriguez",
         curso: "Relações Internacionais",
         pais: "Argentina",
@@ -96,8 +98,20 @@
     var avatar = criar("span", "migufu__avatar", iniciais);
     avatar.setAttribute("aria-hidden", "true");
 
-    perfil.appendChild(avatar);
-    perfil.appendChild(criar("p", "migufu__nome", m.nome));
+    var link = criar("a", "migufu__link-perfil");
+
+    link.href = PerfilPublico.url(m.id, "voluntario");
+
+    link.setAttribute("aria-label", "Ver perfil de " + m.nome);
+
+    link.addEventListener("click", function () {
+      PerfilPublico.guardar(m, "estudante");
+    });
+
+    link.appendChild(avatar);
+    link.appendChild(criar("span", "migufu__nome", m.nome));
+
+    perfil.appendChild(link);
 
     card.appendChild(perfil);
 
