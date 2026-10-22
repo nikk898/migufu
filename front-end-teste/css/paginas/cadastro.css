@@ -1,0 +1,213 @@
+/* ==========================================================================
+   Cadastro (pages/cadastro-voluntario.html e pages/cadastro-estudante.html)
+
+   Usa os tokens e componentes de global.css: .campo, .botao, .subtitulo,
+   .titulo-principal e .icone. Aqui fica só o que é específico desta tela.
+   - Mobile: cabeçalho com seta e logo, formulário em coluna única
+   - Desktop (>= 900px): coluna lateral com a logo + cabeçalho "Cadastro"
+   ========================================================================== */
+
+.cadastro__pagina {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.cadastro__principal {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+/* --- Marca -------------------------------------------------------------- */
+.cadastro__marca {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+}
+
+.cadastro__logo {
+  width: auto;
+  height: 32px;
+}
+
+.cadastro__logo-texto {
+  width: auto;
+  height: 24px;
+}
+
+.cadastro__lateral {
+  display: none;
+}
+
+/* --- Cabeçalho ---------------------------------------------------------- */
+.cadastro__cabecalho {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  padding: var(--esp-2) var(--esp-3);
+  background: var(--cor-fundo-02);
+  border-bottom: var(--borda-apoio);
+}
+
+.cadastro__voltar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--esp-5);
+  height: var(--esp-5);
+  color: var(--cor-primaria);
+}
+
+/* No mobile o título fica só para leitor de tela (a logo ocupa o cabeçalho) */
+.cadastro__titulo {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* --- Formulário --------------------------------------------------------- */
+.cadastro__conteudo {
+  flex: 1;
+  padding: var(--esp-3);
+}
+
+.cadastro__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-4);
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.cadastro__secao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.cadastro__secao > legend {
+  padding: 0;
+  margin-bottom: var(--esp-3);
+}
+
+/* Placeholder dos selects: cor de apoio enquanto nada foi escolhido */
+select.campo__entrada:has(option[value=""]:checked) {
+  color: var(--cor-apoio);
+}
+
+/* --- Idiomas ------------------------------------------------------------ */
+.cadastro__idiomas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.cadastro__idioma {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.cadastro__adicionar {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--esp-2);
+  font-size: var(--fs-legenda);
+  line-height: var(--lh-legenda);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* --- Interesses (Figma: chips cinza; selecionado em azul de destaque) ---- */
+.cadastro__interesses {
+  --cor-destaque: #3ab6ff; /* "Apoio/Destaque" do guia de cores do Figma */
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.interesse {
+  position: relative;
+}
+
+.interesse__entrada {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.interesse__rotulo {
+  display: inline-block;
+  padding: var(--esp-1) var(--esp-3);
+  background: color-mix(in srgb, var(--cor-apoio) 35%, var(--cor-fundo-02));
+  border-radius: 20px;
+  font-size: var(--fs-legenda);
+  line-height: var(--lh-legenda);
+  cursor: pointer;
+}
+
+.interesse__entrada:checked + .interesse__rotulo {
+  background: var(--cor-destaque);
+}
+
+.interesse__entrada:focus-visible + .interesse__rotulo {
+  outline: 2px solid var(--cor-primaria);
+  outline-offset: 2px;
+}
+
+/* --- Desktop ------------------------------------------------------------ */
+@media (min-width: 900px) {
+  .cadastro__pagina {
+    flex-direction: row;
+  }
+
+  .cadastro__lateral {
+    display: block;
+    flex: 0 0 var(--navbar-largura);
+    background: var(--cor-fundo-02);
+    border-right: var(--borda-apoio);
+  }
+
+  .cadastro__lateral .cadastro__marca {
+    height: var(--navbar-header-altura);
+    padding-inline: var(--esp-4);
+    border-bottom: var(--borda-apoio);
+  }
+
+  .cadastro__marca--mobile {
+    display: none;
+  }
+
+  .cadastro__cabecalho {
+    height: var(--navbar-header-altura);
+    padding-inline: var(--esp-4);
+  }
+
+  .cadastro__titulo {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  .cadastro__conteudo {
+    padding: var(--esp-5) var(--esp-4);
+  }
+}
