@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MIGUFU - Cadastro de estudante internacional</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/paginas/cadastro.css">
+</head>
+<body data-perfil="estudante">
+  <div class="cadastro__pagina">
+    <!-- Desktop: coluna lateral com a logo -->
+    <aside class="cadastro__lateral">
+      <div class="cadastro__marca">
+        <img class="cadastro__logo" src="../assets/img/logo-migufu.png" alt="">
+        <img class="cadastro__logo-texto" src="../assets/img/logo-migufu-texto.png" alt="MIGUFU">
+      </div>
+    </aside>
+
+    <div class="cadastro__principal">
+      <!-- TODO: trocar pelo componente de header (criarHeader) quando existir -->
+      <header class="cadastro__cabecalho">
+        <a class="cadastro__voltar" href="login.html" aria-label="Voltar para login">
+          <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </a>
+        <!-- Mobile: logo no cabeçalho -->
+        <div class="cadastro__marca cadastro__marca--mobile">
+          <img class="cadastro__logo" src="../assets/img/logo-migufu.png" alt="">
+          <img class="cadastro__logo-texto" src="../assets/img/logo-migufu-texto.png" alt="MIGUFU">
+        </div>
+        <h1 class="titulo-principal cadastro__titulo">Cadastro</h1>
+      </header>
+
+      <main class="cadastro__conteudo">
+        <form class="cadastro__form" id="form-cadastro" method="post" novalidate>
+
+          <fieldset class="cadastro__secao">
+            <legend class="subtitulo">Dados Pessoais</legend>
+
+            <div class="campo">
+              <label class="campo__rotulo" for="nome">Nome Completo</label>
+              <input class="campo__entrada" type="text" id="nome" name="nome" placeholder="digite seu nome..."
+                     autocomplete="name" required aria-describedby="erro-nome">
+              <p class="campo__erro" id="erro-nome" role="alert" hidden></p>
+            </div>
+
+            <div class="campo">
+              <label class="campo__rotulo" for="documento">CPF/Passaporte</label>
+              <input class="campo__entrada" type="text" id="documento" name="documento" placeholder="XXX.XXX.XXX-XX"
+                     autocomplete="off" data-validar="documento" required aria-describedby="erro-documento">
+              <p class="campo__erro" id="erro-documento" role="alert" hidden></p>
+            </div>
+
+            <div class="campo">
+              <label class="campo__rotulo" for="email">E-mail</label>
+              <input class="campo__entrada" type="email" id="email" name="email" placeholder="digite seu e-mail..."
+                     autocomplete="email" data-validar="email" required aria-describedby="erro-email">
+              <p class="campo__erro" id="erro-email" role="alert" hidden></p>
+            </div>
+
+            <div class="campo">
+              <label class="campo__rotulo" for="telefone">Telefone para contato (com DDD)</label>
+              <input class="campo__entrada" type="tel" id="telefone" name="telefone" placeholder="(XX) X XXXX-XXXX"
+                     autocomplete="tel" data-validar="telefone" data-mascara="telefone" required aria-describedby="erro-telefone">
+              <p class="campo__erro" id="erro-telefone" role="alert" hidden></p>
+            </div>
+
+            <div class="campo">
+              <label class="campo__rotulo" for="pais">Qual seu país de origem?</label>
+              <select class="campo__entrada" id="pais" name="pais" data-opcoes="paises" required aria-describedby="erro-pais">
+                <option value="" disabled selected hidden>Selecione...</option>
+              </select>
+              <p class="campo__erro" id="erro-pais" role="alert" hidden></p>
+            </div>
+            <!-- fim: Dados Pessoais -->
+          </fieldset>
+
+          <fieldset class="cadastro__secao">
+            <legend class="subtitulo">Vínculo Institucional</legend>
+
+            <div class="campo">
+              <label class="campo__rotulo" for="vinculo">Qual seu vínculo com a UFU?</label>
+              <select class="campo__entrada" id="vinculo" name="vinculo" data-opcoes="vinculos" data-padrao="estudante" required aria-describedby="erro-vinculo">
+                <option value="" disabled selected hidden>Selecione...</option>
+              </select>
+              <p class="campo__erro" id="erro-vinculo" role="alert" hidden></p>
+            </div>
+
+            <div class="campo">
+              <label class="campo__rotulo" for="matricula">Qual a sua matrícula?</label>
+              <input class="campo__entrada" type="text" id="matricula" name="matricula" placeholder="digite sua matrícula..."
+                     autocomplete="off" required aria-describedby="erro-matricula">
+              <p class="campo__erro" id="erro-matricula" role="alert" hidden></p>
+            </div>
+
+            <div class="campo">
+              <label class="campo__rotulo" for="curso">Qual curso você faz na UFU?</label>
+              <select class="campo__entrada" id="curso" name="curso" data-opcoes="cursos" required aria-describedby="erro-curso">
+                <option value="" disabled selected hidden>Selecione o curso...</option>
+              </select>
+              <p class="campo__erro" id="erro-curso" role="alert" hidden></p>
+            </div>
+
+            <div class="campo">
+              <label class="campo__rotulo" for="periodo">Qual período?</label>
+              <select class="campo__entrada" id="periodo" name="periodo" data-opcoes="periodos" required aria-describedby="erro-periodo">
+                <option value="" disabled selected hidden>Selecione o período...</option>
+              </select>
+              <p class="campo__erro" id="erro-periodo" role="alert" hidden></p>
+            </div>
+
+            <div class="campo">
+              <label class="campo__rotulo" for="campus">Qual campus você tem aulas/trabalha?</label>
+              <select class="campo__entrada" id="campus" name="campus" data-opcoes="campus" required aria-describedby="erro-campus">
+                <option value="" disabled selected hidden>Selecione...</option>
+              </select>
+              <p class="campo__erro" id="erro-campus" role="alert" hidden></p>
+            </div>
+            <!-- fim: Vínculo Institucional -->
+          </fieldset>
+
+          <fieldset class="cadastro__secao">
+            <legend class="subtitulo">Idiomas</legend>
+            <p class="campo__rotulo" id="idiomas-pergunta">Quais idiomas você tem conhecimento e qual nível?</p>
+
+            <div class="cadastro__idiomas" id="lista-idiomas" role="group" aria-labelledby="idiomas-pergunta"></div>
+
+            <button type="button" class="cadastro__adicionar" id="adicionar-idioma">
+              <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+              Adicionar mais um idioma
+            </button>
+          </fieldset>
+
+          <fieldset class="cadastro__secao">
+            <legend class="subtitulo">Selecione seus interesses</legend>
+            <div class="cadastro__interesses" id="lista-interesses"></div>
+          </fieldset>
+
+          <div class="campo">
+            <label class="subtitulo" for="expectativas">Quais as suas expectativas quanto ao Projeto MIGUFU?</label>
+            <textarea class="campo__entrada" id="expectativas" name="expectativas"
+                      placeholder="Digite aqui as suas expectativas..."></textarea>
+          </div>
+
+          <button type="submit" class="botao botao--primario">Cadastrar perfil</button>
+        </form>
+      </main>
+    </div>
+  </div>
+
+  <!-- Linha de idioma + nível (clonada pelo cadastro.js) -->
+  <template id="modelo-idioma">
+    <div class="cadastro__idioma">
+      <div class="campo">
+        <select class="campo__entrada" name="idioma" data-opcoes="idiomas" aria-label="Idioma">
+          <option value="" disabled selected hidden>Selecione o idioma...</option>
+        </select>
+        <p class="campo__erro" role="alert" hidden></p>
+      </div>
+      <div class="campo">
+        <select class="campo__entrada" name="nivel" data-opcoes="niveis" aria-label="Nível">
+          <option value="" disabled selected hidden>Selecione o nível...</option>
+        </select>
+        <p class="campo__erro" role="alert" hidden></p>
+      </div>
+    </div>
+  </template>
+
+  <script src="../js/cadastro-dados.js"></script>
+  <script src="../js/cadastro.js"></script>
+</body>
+</html>
