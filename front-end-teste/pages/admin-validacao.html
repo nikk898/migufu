@@ -16,7 +16,6 @@
   <link rel="stylesheet" href="../components/card-val-certificado.css?v=2">
 
   <style>
-    
     .nav-abas {
       display: flex;
       gap: 32px;
@@ -41,10 +40,46 @@
       color: #076eb8;
     }
 
-    
     .nav-abas__item.is-ativo {
       color: #076eb8;
       border-bottom-color: #076eb8;
+    }
+
+    @media (min-width: 900px) {
+      .nav-abas {
+        margin-top: -60px !important; /* Puxa as abas para cima especificamente no desktop */
+        position: relative;
+        z-index: 2;
+      }
+    }
+    @media (max-width: 899px) {
+      /* Centraliza as abas de navegação */
+      .nav-abas {
+        justify-content: center !important;
+      }
+
+      /* Centraliza a seção e o título */
+      .admin__secao {
+        text-align: center !important;
+      }
+
+      /* Centraliza o bloco da barra de busca */
+      .inst__busca {
+        margin-left: auto !important;
+        margin-right: auto !important;
+        justify-content: center !important;
+      }
+
+      /* Centraliza o texto digitado dentro do input de busca */
+      .campo__entrada {
+        text-align: center !important;
+      }
+
+      /* Centraliza a lista de cards e os cartões individualmente */
+      .card-val__lista {
+        justify-content: center !important;
+        justify-items: center !important;
+      }
     }
   </style>
 </head>
@@ -53,26 +88,25 @@
   <div id="cabecalho"></div>
 
   <main class="conteudo">
-    
+
     <nav class="nav-abas" aria-label="Abas da Gestão MIGUFU">
       <a class="nav-abas__item is-ativo" href="admin-validacao.html">VALIDAÇÕES</a>
       <a class="nav-abas__item" href="admin-associacao.html">ASSOCIAÇÕES</a>
     </nav>
 
-    <section class="admin__secao">
+    <section class="admin__secao admin__secao--cards">
       <h2 class="subtitulo" style="margin-bottom: var(--esp-3);">Certificados Pendentes</h2>
 
-      
-      <div class="inst__busca" style="max-width: 320px; margin-bottom: var(--esp-4);">
+      <div class="inst__busca" style="max-width: 320px; margin-bottom: var(--esp-4); display: flex; align-items: center;">
         <svg class="icone inst__busca-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
         <label class="sr-only" for="busca-val">Buscar por nome, e-mail ou CPF</label>
         <input type="search" class="campo__entrada" id="busca-val" data-val="busca"
                placeholder="Buscar por nome, e-mail ou CPF..." autocomplete="off">
       </div>
 
-      
       <ul class="card-val__lista" id="lista-validacao"></ul>
     </section>
+
   </main>
 
   <script src="../components/icones.js"></script>

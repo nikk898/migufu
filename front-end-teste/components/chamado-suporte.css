@@ -1,0 +1,430 @@
+/* ==========================================================================
+   MIGUFU - Ajuda e Suporte (admin)
+   Mobile first: lista OU detalhe. Desktop (>= 900px): lista + detalhe lado a lado.
+   ========================================================================== */
+
+.suporte {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+/* --- Abas --------------------------------------------------------------- */
+.suporte__abas {
+  display: flex;
+  border-bottom: 2px solid #c3d3e3;
+}
+
+.suporte__aba {
+  flex: 1;
+  padding: 12px 4px;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+  text-align: center;
+  color: #000;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+}
+
+.suporte__aba.is-ativo {
+  color: var(--cor-primaria);
+  border-bottom-color: var(--cor-primaria);
+}
+
+/* --- Busca -------------------------------------------------------------- */
+.suporte__busca {
+  position: relative;
+}
+
+.suporte__busca-icone {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  color: var(--cor-apoio);
+  pointer-events: none;
+}
+
+.suporte__busca .campo__entrada {
+  padding-left: 44px;
+}
+
+/* --- Lista de chamados -------------------------------------------------- */
+.suporte__lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+  margin: var(--esp-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chamado-item {
+  display: block;
+  width: 100%;
+  padding: var(--esp-3);
+  text-align: left;
+  background: var(--cor-fundo-02);
+  border: 2px solid transparent;
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-card);
+}
+
+.chamado-item.is-selecionado {
+  border-color: var(--cor-primaria);
+}
+
+.chamado-item__topo {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  column-gap: 12px;
+}
+
+.chamado-item__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+}
+
+.chamado-item__nome {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #000;
+}
+
+.chamado-item__tempo {
+  font-size: var(--fs-legenda);
+  line-height: var(--lh-legenda);
+  color: var(--cor-apoio);
+  white-space: nowrap;
+}
+
+.chamado-item__msg {
+  margin-top: var(--esp-3);
+  font-size: 14px;
+  line-height: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.chamado-vazio {
+  padding: var(--esp-4) var(--esp-3);
+  text-align: center;
+  color: var(--cor-apoio);
+}
+
+/* --- Avatar e etiqueta de perfil --------------------------------------- */
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #d9d9d9;
+  color: #101828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.etiqueta {
+  display: inline-block;
+  padding: 0 12px;
+  font-size: 12px;
+  line-height: 18px;
+  color: #101828;
+  border-radius: 20px;
+  border: 1px solid;
+}
+
+.etiqueta--estudante {
+  background: #b7e4c0;
+  border-color: #4fae63;
+}
+
+.etiqueta--voluntario {
+  background: #bfe3ff;
+  border-color: #5aaee8;
+}
+
+/* --- Detalhe ------------------------------------------------------------ */
+.suporte__detalhe-coluna {
+  display: none;
+}
+
+.suporte__titulo-detalhe {
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+  font-weight: 700;
+  color: #000;
+  margin-bottom: var(--esp-3);
+}
+
+/* Mobile: troca lista por detalhe */
+.suporte--detalhe .suporte__detalhe-coluna {
+  display: block;
+}
+
+.suporte--detalhe .suporte__lista-coluna,
+.suporte--detalhe .suporte__abas {
+  display: none;
+}
+
+.chamado-det {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.chamado-det__status {
+  order: -1;
+  align-self: flex-start;
+  height: 32px;
+  font-size: 14px;
+}
+
+.chamado-det__bloco {
+  padding: var(--esp-3);
+  background: var(--cor-fundo-02);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-card);
+}
+
+.chamado-det__pessoa {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  column-gap: 12px;
+  align-items: start;
+}
+
+.chamado-det__nome {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #000;
+}
+
+.chamado-det__contatos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin-top: var(--esp-3);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.chamado-det__contato-icone,
+.chamado-det__tempo-topo {
+  display: none;
+}
+
+.chamado-det__tempo-topo {
+  font-size: 16px;
+  color: var(--cor-apoio);
+  white-space: nowrap;
+}
+
+.chamado-det__icone-email {
+  color: var(--cor-primaria);
+}
+
+.chamado-det__mensagem {
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.chamado-det__tempo {
+  display: block;
+  margin-top: var(--esp-3);
+  text-align: right;
+  font-size: 14px;
+  color: var(--cor-apoio);
+}
+
+.chamado-det__resolver {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.chamado-det__pergunta {
+  text-align: center;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: var(--esp-2);
+}
+
+.chamado-det__resolver .botao {
+  width: 100%;
+}
+
+button.botao.chamado-det__btn-resolver {
+  background-color: var(--cor-status-01);
+  border-color: var(--cor-status-01);
+  color: var(--cor-texto-03);
+}
+
+.chamado-det__btn-voltar {
+  background: var(--cor-fundo-02);
+  color: var(--cor-primaria);
+}
+
+.chamado-det__vazio {
+  padding: var(--esp-4);
+  color: var(--cor-apoio);
+}
+
+/* ==========================================================================
+   Desktop
+   ========================================================================== */
+@media (min-width: 900px) {
+  .suporte {
+    display: grid;
+    grid-template-columns: 327px minmax(0, 1fr);
+    grid-template-areas:
+      "abas    abas"
+      "lista   detalhe";
+    column-gap: 80px;
+    align-items: start;
+  }
+
+  .suporte__abas {
+    grid-area: abas;
+    justify-content: flex-start;
+    margin-bottom: var(--esp-3);
+  }
+
+  .suporte__aba {
+    flex: none;
+    padding: 12px 36px;
+  }
+
+  .suporte__lista-coluna {
+    grid-area: lista;
+  }
+
+  .suporte__detalhe-coluna {
+    grid-area: detalhe;
+    display: block;
+  }
+
+  /* No desktop os dois ficam sempre visíveis, mesmo com .suporte--detalhe */
+  .suporte--detalhe .suporte__lista-coluna,
+  .suporte--detalhe .suporte__abas {
+    display: block;
+  }
+
+  .suporte--detalhe .suporte__abas {
+    display: flex;
+  }
+
+  .chamado-det {
+    gap: 0;
+    padding: var(--esp-3);
+    background: var(--cor-fundo-02);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra-card);
+  }
+
+  .chamado-det__bloco {
+    padding: 0;
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .chamado-det__status {
+    position: absolute;
+    top: 56px;
+    right: var(--esp-3);
+    order: 0;
+  }
+
+  .chamado-det__tempo-topo {
+    display: block;
+  }
+
+  .chamado-det__pessoa {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .chamado-det__icone-email {
+    display: none;
+  }
+
+  .chamado-det__contatos {
+    flex-direction: row;
+    gap: var(--esp-4);
+    padding-bottom: var(--esp-3);
+    border-bottom: 1px solid #d9d9d9;
+  }
+
+  .chamado-det__contato-icone {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+    margin-right: 8px;
+    color: var(--cor-texto-01);
+  }
+
+  .chamado-det__contato {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+  }
+
+  .chamado-det__rotulo {
+    display: none;
+  }
+
+  .chamado-det__bloco--msg {
+    min-height: 280px;
+    padding-top: var(--esp-3);
+    padding-bottom: var(--esp-3);
+  }
+
+  .chamado-det__mensagem {
+    font-size: 16px;
+  }
+
+  .chamado-det__tempo {
+    display: none;
+  }
+
+  .chamado-det__bloco--resolver {
+    padding-top: var(--esp-3);
+    border-top: 1px solid #d9d9d9;
+  }
+
+  .chamado-det__pergunta {
+    text-align: left;
+  }
+
+  .chamado-det__resolver {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--esp-4);
+    justify-content: center;
+  }
+
+  .chamado-det__resolver .botao {
+    width: auto;
+    min-width: 280px;
+  }
+
+  .chamado-det__btn-voltar {
+    display: none;
+  }
+}

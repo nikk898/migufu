@@ -1,7 +1,11 @@
 (function () {
   "use strict";
 
-  // Listando os estudantes disponíveis
+  var POR_PAGINA = 10;
+
+  /* ------------------------------------------------------------------
+     Dados de exemplo (trocar pela API depois)
+     ------------------------------------------------------------------ */
   var estudantesMock = [
     {
       id: 1,
@@ -12,8 +16,7 @@
       vinculos: [
         { id: 101, nome: "Felipe Martins", curso: "Não se aplica" },
         { id: 102, nome: "João Silva", curso: "Sistemas de Informação" }
-      ],
-      filtros: ["Sistemas de Informação", "Francês (básico)", "Inglês (Intermediário)", "Parques"]
+      ]
     },
     {
       id: 2,
@@ -21,12 +24,10 @@
       curso: "Ciências Contábeis",
       idiomas: "Espanhol (nativo), Português (básico)",
       tags: "Fotografia, culinária, viagens, séries, natação",
-      vinculos: [],
-      filtros: ["Ciências Contábeis", "Espanhol (Nativo)", "Viagens"]
+      vinculos: []
     }
   ];
 
-  // Listando os voluntários
   var voluntariosMock = [
     {
       id: 101,
@@ -44,9 +45,49 @@
     }
   ];
 
+  // Dados extras só para testar a paginação (apagar quando ligar à API)
+  (function gerarExtras() {
+    var nomes = ["Ana Souza", "Carlos Lima", "Luiza Prado", "Pedro Alves", "Sofia Moreau", "Rafael Costa",
+                 "Camila Torres", "Diego Herrera", "Beatriz Nunes", "Lucas Ferreira", "Helena Duarte"];
+    var cursos = ["Ciências Contábeis", "Relações Internacionais", "Sistemas de Informação", "Direito", "Medicina", "Não se aplica"];
+
+    for (var i = 0; i < 23; i++) {
+      var nome = nomes[i % nomes.length] + (i >= nomes.length ? " " + (Math.floor(i / nomes.length) + 1) : "");
+      voluntariosMock.push({
+        id: 103 + i,
+        nome: nome,
+        curso: cursos[i % cursos.length],
+        idiomas: "Português (Nativo), Inglês (Básico)",
+        tags: "Parques, música, esportes"
+      });
+    }
+
+    for (var j = 0; j < 22; j++) {
+      var nomeE = nomes[(j + 4) % nomes.length] + " " + (j + 1);
+      estudantesMock.push({
+        id: 3 + j,
+        nome: nomeE,
+        curso: cursos[(j + 2) % cursos.length],
+        idiomas: "Espanhol (Nativo), Inglês (Intermediário)",
+        tags: "Viagens, culinária, cinema",
+        vinculos: j % 3 === 0 ? [{ id: 103 + j, nome: voluntariosMock[2 + j].nome, curso: voluntariosMock[2 + j].curso }] : []
+      });
+    }
+  })();
+
+  /* ---- Estado ---- */
   var estudanteSelecionado = null;
   var termoBusca = "";
+  var statusVinculo = "todos";   // Todos | Com vínculo | Sem vínculo (lista de estudantes)
+  var pagina = 1;
 
+  var OPCOES_VINCULO = [
+    { id: "todos",       rotulo: "Todos" },
+    { id: "com_vinculo", rotulo: "Com vínculo" },
+    { id: "sem_vinculo", rotulo: "Sem vínculo" }
+  ];
+
+  /* ---- Utilitários ---- */
   function obterIniciais(nome) {
     if (!nome) return "??";
     var partes = nome.trim().split(/\s+/);
@@ -60,7 +101,33 @@
     return el.innerHTML;
   }
 
-  
+  function buscaCombina(pessoa) {
+    if (!termoBusca) return true;
+    var b = termoBusca.toLowerCase();
+    return pessoa.nome.toLowerCase().indexOf(b) !== -1 || pessoa.curso.toLowerCase().indexOf(b) !== -1;
+  }
+
+  /* Devolve só os itens da página atual e mostra a paginação */
+  function paginar(lista) {
+    var totalPaginas = Math.max(1, Math.ceil(lista.length / POR_PAGINA));
+    if (pagina > totalPaginas) pagina = totalPaginas;
+
+    Paginacao.render("#paginacao", {
+      total: lista.length,
+      porPagina: POR_PAGINA,
+      paginaAtual: pagina,
+      aoMudar: function (p) {
+        pagina = p;
+        renderizar();
+        window.scrollTo({ top: 0 });
+      }
+    });
+
+    var inicio = (pagina - 1) * POR_PAGINA;
+    return lista.slice(inicio, inicio + POR_PAGINA);
+  }
+
+  /* ---- Confirmações ---- */
   function confirmarVinculacao(estudante, voluntario, aoConfirmarSucesso) {
     Modal.confirmar({
       titulo: "Vincular " + voluntario.nome + " a " + estudante.nome + "?",
@@ -73,7 +140,6 @@
     });
   }
 
-  
   function confirmarDesvinculacao(estudante, voluntario, aoConfirmarSucesso) {
     Modal.confirmar({
       titulo: "Desvincular " + voluntario.nome + " a " + estudante.nome + "?",
@@ -86,7 +152,6 @@
       }
     });
   }
-
 
   function abrirModalVinculos(estudante) {
     var modal = Modal.criar({
@@ -144,6 +209,7 @@
         btnAdd.addEventListener("click", function () {
           modal.fechar();
           estudanteSelecionado = estudante;
+          pagina = 1;
           renderizar();
         });
       }
@@ -153,13 +219,14 @@
     modal.abrir();
   }
 
+  /* ---- Renderização ---- */
   function renderizar() {
     var containerPainel = document.getElementById("painel-selecao-estudante");
-    var containerFiltros = document.getElementById("painel-filtros-ativos");
+    var containerStatus = document.getElementById("filtro-status");
     var listaContainer = document.getElementById("lista-associacoes");
 
-   
     if (estudanteSelecionado) {
+      /* ===== MODO: escolher voluntários para o estudante selecionado ===== */
       containerPainel.style.display = "block";
       containerPainel.innerHTML =
         '<div class="card card-estudante-fixado">' +
@@ -180,71 +247,21 @@
 
       document.getElementById("btn-desmarcar").addEventListener("click", function () {
         estudanteSelecionado = null;
+        pagina = 1;
         renderizar();
       });
 
-      
-      containerFiltros.style.display = "block";
-      var htmlChipsFiltros = (estudanteSelecionado.filtros || []).map(function (f, index) {
-        return (
-          '<span class="chip-filtro-ativo">' +
-            escaping(f) +
-            ' <button type="button" class="btn-remover-filtro" data-filtro-index="' + index + '" aria-label="Remover ' + escaping(f) + '">&times;</button>' +
-          '</span>'
-        );
-      }).join("");
+      containerStatus.hidden = true;
 
-      containerFiltros.innerHTML =
-        '<h3 class="filtros-ativos__titulo">Filtros Ativos</h3>' +
-        '<div class="filtros-ativos__lista">' +
-          '<svg class="icone" viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;fill:#667085;"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>' +
-          htmlChipsFiltros +
-          '<div class="filtros-ativos__novo">' +
-            '<input type="text" id="input-novo-filtro" placeholder="Adicionar filtro..." class="campo__entrada-filtro">' +
-            '<button type="button" id="btn-add-filtro" class="btn-add-filtro-chip">+</button>' +
-          '</div>' +
-        '</div>';
+      var filtradosVol = voluntariosMock.filter(buscaCombina);
+      var itensVol = paginar(filtradosVol);
 
-      containerFiltros.querySelectorAll(".btn-remover-filtro").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          var idx = parseInt(btn.getAttribute("data-filtro-index"), 10);
-          estudanteSelecionado.filtros.splice(idx, 1);
-          renderizar();
-        });
-      });
-
-      function adicionarFiltro() {
-        var input = document.getElementById("input-novo-filtro");
-        if (!input) return;
-        var valor = input.value.trim();
-        if (valor) {
-          if (!estudanteSelecionado.filtros) estudanteSelecionado.filtros = [];
-          estudanteSelecionado.filtros.push(valor);
-          renderizar();
-        }
+      if (!itensVol.length) {
+        listaContainer.innerHTML = '<li class="card-assoc-est__vazio"><p class="texto">Nenhum voluntário encontrado.</p></li>';
+        return;
       }
 
-      var btnAddFiltro = document.getElementById("btn-add-filtro");
-      var inputNovoFiltro = document.getElementById("input-novo-filtro");
-
-      if (btnAddFiltro) btnAddFiltro.addEventListener("click", adicionarFiltro);
-      if (inputNovoFiltro) {
-        inputNovoFiltro.addEventListener("keypress", function (e) {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            adicionarFiltro();
-          }
-        });
-      }
-
-      
-      var filtradosVol = voluntariosMock.filter(function (v) {
-        if (!termoBusca) return true;
-        var b = termoBusca.toLowerCase();
-        return v.nome.toLowerCase().indexOf(b) !== -1 || v.curso.toLowerCase().indexOf(b) !== -1;
-      });
-
-      listaContainer.innerHTML = filtradosVol.map(function (vol) {
+      listaContainer.innerHTML = itensVol.map(function (vol) {
         var jaVinculado = estudanteSelecionado.vinculos.some(function (v) { return v.id === vol.id; });
         return (
           '<li class="card card-assoc-est">' +
@@ -288,21 +305,36 @@
       });
 
     } else {
-      
+      /* ===== MODO: lista de estudantes ===== */
       containerPainel.style.display = "none";
-      containerFiltros.style.display = "none";
 
-      var filtradosEst = estudantesMock.filter(function (e) {
-        if (!termoBusca) return true;
-        var b = termoBusca.toLowerCase();
-        return e.nome.toLowerCase().indexOf(b) !== -1 || e.curso.toLowerCase().indexOf(b) !== -1;
+      containerStatus.hidden = false;
+      FiltroStatus.render("#filtro-status", {
+        rotulo: "Filtrar por vínculo",
+        opcoes: OPCOES_VINCULO,
+        selecionado: statusVinculo,
+        aoMudar: function (id) {
+          statusVinculo = id;
+          pagina = 1;
+          renderizar();
+        }
       });
 
-      var listaComAcoes = filtradosEst.map(function (e) {
+      var filtradosEst = estudantesMock.filter(function (e) {
+        var comVinculo = e.vinculos && e.vinculos.length > 0;
+        if (statusVinculo === "com_vinculo" && !comVinculo) return false;
+        if (statusVinculo === "sem_vinculo" && comVinculo) return false;
+        return buscaCombina(e);
+      });
+
+      var itensEst = paginar(filtradosEst);
+
+      var listaComAcoes = itensEst.map(function (e) {
         return Object.assign({}, e, {
           comVinculo: e.vinculos && e.vinculos.length > 0,
           aoVincular: function () {
-            abrirModalVinculos(e);
+            // Redireciona para a página de associação passando o ID do estudante
+            window.location.href = "admin-associar.html?id=" + e.id;
           }
         });
       });
@@ -323,6 +355,7 @@
     if (inputBusca) {
       inputBusca.addEventListener("input", function () {
         termoBusca = inputBusca.value.trim();
+        pagina = 1;
         renderizar();
       });
     }

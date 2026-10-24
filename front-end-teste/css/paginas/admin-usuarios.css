@@ -1,0 +1,81 @@
+/* Layout das páginas admin-usuarios-voluntarios / admin-usuarios-estudantes */
+
+.usuarios {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+/* Abas (links entre as duas páginas) */
+.usuarios__abas {
+  display: flex;
+  border-bottom: 2px solid #c3d3e3;
+}
+
+.usuarios__aba {
+  flex: 1;
+  padding: 12px 4px;
+  margin-bottom: -2px;
+  text-align: center;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #000;
+  border-bottom: 3px solid transparent;
+}
+
+.usuarios__aba:hover {
+  color: var(--cor-primaria);
+}
+
+.usuarios__aba.is-ativo {
+  color: var(--cor-primaria);
+  border-bottom-color: var(--cor-primaria);
+}
+
+/* Busca */
+.usuarios__busca {
+  position: relative;
+}
+
+.usuarios__busca-icone {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  color: var(--cor-apoio);
+  pointer-events: none;
+}
+
+.usuarios__busca .campo__entrada {
+  padding-left: 44px;
+}
+
+/* Grade de cards */
+.usuarios__lista {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--esp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.usuarios__paginacao {
+  margin-top: var(--esp-2);
+}
+
+@media (min-width: 900px) {
+  .usuarios__aba {
+    flex: none;
+    padding: 12px 36px;
+  }
+
+  .usuarios__abas {
+    margin-bottom: var(--esp-1);
+  }
+
+  .usuarios__lista {
+    grid-template-columns: repeat(auto-fill, 327px);
+    gap: var(--esp-4) var(--esp-5);
+  }
+}

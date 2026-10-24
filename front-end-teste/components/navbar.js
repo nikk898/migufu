@@ -34,9 +34,9 @@
   // Itens por perfil. Os links assumem páginas na mesma pasta (pages/).
   var ITENS_ADMIN = [
     { id: "inicio", rotulo: "Início", href: "admin.html", icone: "home" },
-    { id: "migufus", rotulo: "MIGUFUS", href: "admin-migufus.html", icone: "groups" },
-    { id: "usuarios", rotulo: "Usuários", href: "admin-usuarios.html", icone: "language" },
-    { id: "ajuda", rotulo: "Ajuda", href: "admin-ajuda.html", icone: "ajuda" },
+    { id: "migufus", rotulo: "MIGUFUS", href: "admin-validacao.html", icone: "groups" },
+    { id: "usuarios", rotulo: "Usuários", href: "admin-usuarios-voluntarios.html", icone: "language" },
+    { id: "ajuda", rotulo: "Ajuda", href: "admin-suporte.html", icone: "ajuda" },
   ];
 
   var ITENS_MESTRE = [

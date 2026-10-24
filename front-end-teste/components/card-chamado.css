@@ -1,0 +1,282 @@
+/* ==========================================================================
+   MIGUFU - Componente CardChamado (card da lista + card de detalhe)
+   ========================================================================== */
+
+/* --- Avatar e etiqueta de perfil --------------------------------------- */
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #d9d9d9;
+  color: #101828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.etiqueta {
+  display: inline-block;
+  padding: 0 8px;
+  font-size: 12px;
+  line-height: 18px;
+  white-space: nowrap;
+  color: #101828;
+  border: 1px solid;
+  border-radius: 20px;
+}
+
+.etiqueta--estudante {
+  background: #b7e4c0;
+  border-color: #4fae63;
+}
+
+.etiqueta--voluntario {
+  background: #bfe3ff;
+  border-color: #5aaee8;
+}
+
+/* --- Card da lista ------------------------------------------------------ */
+.card-chamado {
+  display: block;
+  width: 100%;
+  padding: var(--esp-3);
+  text-align: left;
+  border: 2px solid transparent;
+}
+
+.card-chamado.is-selecionado {
+  border-color: var(--cor-primaria);
+}
+
+.card-chamado__topo {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  column-gap: 12px;
+}
+
+.card-chamado__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-1);
+  min-width: 0;
+}
+
+.card-chamado__nome {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #000;
+}
+
+.card-chamado__tempo {
+  font-size: var(--fs-legenda);
+  line-height: var(--lh-legenda);
+  color: var(--cor-apoio);
+  white-space: nowrap;
+}
+
+.card-chamado__msg {
+  margin-top: var(--esp-3);
+  font-size: 14px;
+  line-height: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-chamado__vazio {
+  padding: var(--esp-4) var(--esp-3);
+  text-align: center;
+  color: var(--cor-apoio);
+}
+
+/* --- Card de detalhe (mobile: 3 cards; desktop: 1 card) ---------------- */
+.detalhe-chamado {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-3);
+}
+
+.detalhe-chamado__status {
+  order: -1;
+  align-self: flex-start;
+  height: 32px;
+}
+
+.detalhe-chamado__bloco {
+  padding: var(--esp-3);
+  background: var(--cor-fundo-02);
+  border-radius: var(--raio);
+  box-shadow: var(--sombra-card);
+}
+
+.detalhe-chamado__pessoa {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  column-gap: 12px;
+  align-items: start;
+}
+
+.detalhe-chamado__nome {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #000;
+}
+
+.detalhe-chamado__icone-email {
+  color: var(--cor-primaria);
+}
+
+.detalhe-chamado__contatos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  margin-top: var(--esp-3);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.detalhe-chamado__contato-icone,
+.detalhe-chamado__tempo-topo {
+  display: none;
+}
+
+.detalhe-chamado__mensagem {
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.detalhe-chamado__tempo {
+  display: block;
+  margin-top: var(--esp-3);
+  text-align: right;
+  font-size: 14px;
+  color: var(--cor-apoio);
+}
+
+.detalhe-chamado__pergunta {
+  margin-bottom: var(--esp-3);
+  text-align: center;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  color: #000;
+}
+
+.detalhe-chamado__botoes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+}
+
+.detalhe-chamado__botoes .botao {
+  width: 100%;
+}
+
+button.botao.detalhe-chamado__btn-resolver {
+  background-color: var(--cor-status-01);
+  border-color: var(--cor-status-01);
+  color: var(--cor-texto-03);
+}
+
+.detalhe-chamado__vazio {
+  padding: var(--esp-4);
+  color: var(--cor-apoio);
+}
+
+@media (min-width: 900px) {
+  .detalhe-chamado {
+    gap: 0;
+    padding: var(--esp-3);
+    background: var(--cor-fundo-02);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra-card);
+  }
+
+  .detalhe-chamado__bloco {
+    padding: 0;
+    background: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .detalhe-chamado__status {
+    position: absolute;
+    top: 56px;
+    right: var(--esp-3);
+    order: 0;
+  }
+
+  .detalhe-chamado__icone-email,
+  .detalhe-chamado__rotulo,
+  .detalhe-chamado__tempo,
+  .detalhe-chamado__btn-voltar {
+    display: none;
+  }
+
+  .detalhe-chamado__tempo-topo {
+    display: block;
+    font-size: 16px;
+    color: var(--cor-apoio);
+    white-space: nowrap;
+  }
+
+  .detalhe-chamado__contatos {
+    flex-direction: row;
+    gap: var(--esp-4);
+    padding-bottom: var(--esp-3);
+    border-bottom: 1px solid #d9d9d9;
+  }
+
+  .detalhe-chamado__contato {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+  }
+
+  .detalhe-chamado__contato-icone {
+    display: block;
+    width: 24px;
+    height: 24px;
+    margin-right: var(--esp-2);
+  }
+
+  .detalhe-chamado__bloco--msg {
+    min-height: 280px;
+    padding: var(--esp-3) 0;
+  }
+
+  .detalhe-chamado__mensagem {
+    font-size: 16px;
+  }
+
+  .detalhe-chamado__bloco--acoes {
+    padding-top: var(--esp-3);
+    border-top: 1px solid #d9d9d9;
+  }
+
+  .detalhe-chamado__pergunta {
+    text-align: left;
+  }
+
+  .detalhe-chamado__botoes {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--esp-4);
+    justify-content: center;
+  }
+
+  .detalhe-chamado__botoes .botao {
+    width: auto;
+    min-width: 280px;
+  }
+}

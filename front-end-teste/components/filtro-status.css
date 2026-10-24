@@ -1,0 +1,30 @@
+/* Filtro por situação (Todos / Aptos / Não aptos / Vinculados...) */
+.filtro-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+
+.filtro-status__btn {
+  height: 36px;
+  padding: 0 var(--esp-3);
+  background: var(--cor-fundo-02);
+  border: 1px solid var(--cor-apoio);
+  border-radius: 20px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--cor-texto-01);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.filtro-status__btn:hover:not(.is-ativo) {
+  border-color: var(--cor-primaria);
+  color: var(--cor-primaria);
+}
+
+.filtro-status__btn.is-ativo {
+  background: var(--cor-primaria);
+  border-color: var(--cor-primaria);
+  color: var(--cor-texto-03);
+}

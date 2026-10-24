@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MIGUFU - Usuários cadastrados (Voluntários)</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../components/navbar.css">
+  <link rel="stylesheet" href="../components/cabecalho-pagina.css">
+  <link rel="stylesheet" href="../components/modal.css">
+  <link rel="stylesheet" href="../components/card-usuario.css">
+  <link rel="stylesheet" href="../components/filtro-status.css">
+  <link rel="stylesheet" href="../components/filtro-preferencias.css">
+  <link rel="stylesheet" href="../components/paginacao.css">
+  <link rel="stylesheet" href="../css/paginas/admin-usuarios.css">
+</head>
+<body>
+  <div id="navbar"></div>
+  <div id="cabecalho"></div>
+
+  <main class="conteudo" data-tipo="voluntario">
+    <div class="usuarios">
+
+      <nav class="usuarios__abas" aria-label="Tipos de usuário">
+        <a class="usuarios__aba is-ativo" href="admin-usuarios-voluntarios.html">VOLUNTÁRIOS</a>
+        <a class="usuarios__aba" href="admin-usuarios-estudantes.html">ESTUDANTES</a>
+      </nav>
+
+      <div class="usuarios__busca">
+        <svg class="icone usuarios__busca-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <label class="sr-only" for="busca-usuario">Buscar por nome, e-mail ou CPF</label>
+        <input type="search" class="campo__entrada" id="busca-usuario"
+               placeholder="Buscar por nome, e-mail ou CPF..." autocomplete="off">
+      </div>
+
+      <div id="filtro-status"></div>
+
+      <div id="filtros-ativos"></div>
+
+      <ul class="usuarios__lista" id="lista-usuarios"></ul>
+      <div class="usuarios__paginacao" id="paginacao"></div>
+
+    </div>
+  </main>
+
+  <script src="../components/icones.js"></script>
+  <script src="../components/navbar.js"></script>
+  <script src="../components/cabecalho-pagina.js"></script>
+  <script src="../components/modal.js"></script>
+  <script src="../components/card-usuario.js"></script>
+  <script src="../components/filtro-status.js"></script>
+  <script src="../components/filtro-preferencias.js"></script>
+  <script src="../components/paginacao.js"></script>
+  <script src="../js/admin-usuarios.js"></script>
+</body>
+</html>

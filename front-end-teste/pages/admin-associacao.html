@@ -14,6 +14,8 @@
   <link rel="stylesheet" href="../components/cabecalho-pagina.css">
   <link rel="stylesheet" href="../components/modal.css">
   <link rel="stylesheet" href="../components/card-estudante-vinc.css?v=6">
+  <link rel="stylesheet" href="../components/filtro-status.css">
+  <link rel="stylesheet" href="../components/paginacao.css">
 
   <style>
     /* Abas */
@@ -21,8 +23,10 @@
       display: flex;
       gap: 32px;
       border-bottom: 2px solid #e4e7ec;
+      position: relative; 
       margin-bottom: 24px;
       width: 100%;
+      z-index: 2;
     }
 
     .nav-abas__item {
@@ -42,7 +46,6 @@
       border-bottom-color: #076eb8;
     }
 
-    
     .modal-vinculos__sub {
       font-size: 14px;
       color: #667085;
@@ -120,7 +123,6 @@
       margin-bottom: 12px;
     }
 
-  
     .card-estudante-fixado {
       position: relative;
       background: #ffffff;
@@ -174,89 +176,6 @@
       margin: 0;
     }
 
-    .filtros-ativos__container {
-      background: #ffffff;
-      padding: 16px 24px;
-      border-radius: 8px;
-      margin-bottom: 24px;
-    }
-
-    .filtros-ativos__titulo {
-      font-size: 16px;
-      font-weight: 700;
-      margin: 0 0 12px 0;
-      color: #000000;
-    }
-
-    .filtros-ativos__lista {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .chip-filtro-ativo {
-      background-color: #d0d5dd;
-      color: #344054;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 6px 12px;
-      border-radius: 16px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .chip-filtro-ativo button {
-      background: none;
-      border: none;
-      font-size: 14px;
-      cursor: pointer;
-      color: #344054;
-      padding: 0;
-    }
-
-    
-    .filtros-ativos__novo {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-left: 6px;
-    }
-
-    .campo__entrada-filtro {
-      height: 32px;
-      padding: 0 12px;
-      font-size: 12px;
-      border: 1px solid #d0d5dd;
-      border-radius: 16px;
-      outline: none;
-    }
-
-    .campo__entrada-filtro:focus {
-      border-color: #076eb8;
-    }
-
-    .btn-add-filtro-chip {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background-color: #076eb8;
-      color: #ffffff;
-      border: none;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .btn-add-filtro-chip:hover {
-      opacity: 0.9;
-    }
-
-    
     .btn-vincular-op {
       width: 100%;
       height: 44px;
@@ -286,6 +205,40 @@
       border-radius: 12px;
       margin-left: auto;
     }
+
+    /* Regras de Desktop (Ajuste do espaço do cabeçalho) */
+    @media (min-width: 900px) {
+      .nav-abas {
+        margin-top: -60px !important; 
+        position: relative;
+        z-index: 2;
+      }
+    }
+
+    /* Regras de Celular (Centraliza tudo menos o cabeçalho) */
+    @media (max-width: 899px) {
+      .nav-abas {
+        justify-content: center !important;
+      }
+      .admin__secao {
+        text-align: center !important;
+      }
+      .inst__busca {
+        margin-left: auto !important;
+        margin-right: auto !important;
+        justify-content: center !important;
+      }
+      .campo__entrada {
+        text-align: center !important;
+      }
+      .card-assoc-est__lista {
+        justify-content: center !important;
+        justify-items: center !important;
+      }
+      .filtro-status {
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 <body>
@@ -298,24 +251,21 @@
       <a class="nav-abas__item" href="admin-validacao.html">VALIDAÇÕES</a>
       <a class="nav-abas__item is-ativo" href="admin-associacao.html">ASSOCIAÇÕES</a>
     </nav>
-
     
     <div id="painel-selecao-estudante" style="display: none;"></div>
-
     
-    <div id="painel-filtros-ativos" class="filtros-ativos__container" style="display: none;"></div>
-
     <section class="admin__secao">
-     
-      <div class="inst__busca" style="max-width: 320px; margin-bottom: var(--esp-4);">
+      <div class="inst__busca" style="max-width: 320px; margin-bottom: var(--esp-4); display: flex; align-items: center;">
         <svg class="icone inst__busca-icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
         <label class="sr-only" for="busca-assoc">Buscar por nome, e-mail ou CPF</label>
         <input type="search" class="campo__entrada" id="busca-assoc" data-assoc="busca"
                placeholder="Buscar por nome, e-mail ou CPF..." autocomplete="off">
       </div>
-
       
+      <div id="filtro-status" style="margin-bottom: var(--esp-4);"></div>
+
       <ul class="card-assoc-est__lista" id="lista-associacoes"></ul>
+      <div id="paginacao" style="margin-top: var(--esp-4);"></div>
     </section>
   </main>
 
@@ -324,6 +274,8 @@
   <script src="../components/cabecalho-pagina.js"></script>
   <script src="../components/modal.js"></script>
   <script src="../components/card-estudante-vinc.js"></script>
+  <script src="../components/filtro-status.js"></script>
+  <script src="../components/paginacao.js"></script>
   <script src="../js/admin-associacao.js"></script>
 </body>
-</html>
+</html> 
