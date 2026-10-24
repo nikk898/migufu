@@ -31,6 +31,50 @@
     linha.querySelectorAll('select').forEach(preencherSelect);
     listaIdiomas.append(linha);
   }
+/* ---------- Campos de vínculo: apenas no cadastro de voluntário ---------- */
+function configurarVinculoVoluntario() {
+  if (perfil !== 'voluntario') return;
+
+  const vinculo = document.getElementById('vinculo');
+  const estudante = document.getElementById('campos-estudante');
+  const campus = document.getElementById('campos-campus');
+
+  if (!vinculo || !estudante || !campus) return;
+
+  function alternar(bloco, mostrar) {
+    bloco.hidden = !mostrar;
+
+    bloco.querySelectorAll('input, select, textarea').forEach((campo) => {
+      campo.disabled = !mostrar;
+
+      if (!mostrar) {
+        campo.value = '';
+        campo.removeAttribute('aria-invalid');
+
+        const erro = campo.closest('.campo')?.querySelector('.campo__erro');
+
+        if (erro) {
+          erro.hidden = true;
+          erro.textContent = '';
+        }
+      }
+    });
+  }
+
+  function atualizar() {
+    const ehEstudante = vinculo.value === 'estudante';
+    const ehFuncionario = vinculo.value === 'funcionario';
+
+    // Curso e período aparecem apenas para estudante.
+    alternar(estudante, ehEstudante);
+
+    // Campus aparece para estudante e funcionário.
+    alternar(campus, ehEstudante || ehFuncionario);
+  }
+
+  vinculo.addEventListener('change', atualizar);
+  atualizar();
+}
 
   /* ---------- Máscara e formatação ---------- */
   function mascararTelefone(valor) {
@@ -164,4 +208,5 @@
   document.querySelectorAll('select[data-opcoes]').forEach(preencherSelect);
   criarInteresses();
   adicionarIdioma();
+  configurarVinculoVoluntario();
 })();

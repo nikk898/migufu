@@ -1,0 +1,36 @@
+/* Link acessível para abrir perfil pelo avatar ou nome em qualquer card MIGUFU. */
+.migufu__link-perfil {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-3);
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--raio);
+}
+
+.migufu__link-perfil:hover .migufu__nome,
+.migufu__link-perfil:focus-visible .migufu__nome {
+  color: var(--cor-primaria);
+  text-decoration: underline;
+}
+
+.migufu__link-perfil:focus-visible {
+  outline: 2px solid var(--cor-primaria);
+  outline-offset: 4px;
+}
+
+/* Somente leitura: sem lápis, alteração de senha ou edição. */
+.perfil-publico__erro {
+  max-width: 580px;
+  padding: var(--esp-3);
+}
+
+#perfil-publico-voltar {
+  font-size: 32px;
+  line-height: 1;
+}
+
+#perfil-publico-dados {
+  gap: 12px 20px;
+}

@@ -41,19 +41,39 @@
 
   var ITENS_MESTRE = [
     { id: "inicio", rotulo: "Início", href: "mestre.html", icone: "home" },
-    { id: "instituicoes", rotulo: "Instituições", href: "mestre-instituicoes.html", icone: "lista" },
+    {
+      id: "instituicoes",
+      rotulo: "Instituições",
+      href: "mestre-instituicoes.html",
+      icone: "lista",
+    },
   ];
 
   var ITENS_VOLUNTARIO = [
     { id: "inicio", rotulo: "Início", href: "voluntario.html", icone: "home" },
-    { id: "perfil", rotulo: "Meu Perfil", href: "perfil-voluntario.html", icone: "usuario" },
+    {
+      id: "perfil",
+      rotulo: "Meu Perfil",
+      href: "perfil-voluntario.html",
+      icone: "usuario",
+    },
     { id: "ajuda", rotulo: "Ajuda", href: "ajuda.html", icone: "ajuda" },
   ];
 
   var ITENS_ESTUDANTE = [
     { id: "inicio", rotulo: "Início", href: "estudante.html", icone: "home" },
-    { id: "perfil", rotulo: "Meu Perfil", href: "perfil-estudante.html", icone: "usuario" },
-    { id: "ajuda", rotulo: "Ajuda", href: "ajuda.html?perfil=estudante", icone: "ajuda" },
+    {
+      id: "perfil",
+      rotulo: "Meu Perfil",
+      href: "perfil-estudante.html",
+      icone: "usuario",
+    },
+    {
+      id: "ajuda",
+      rotulo: "Ajuda",
+      href: "ajuda.html?perfil=estudante",
+      icone: "ajuda",
+    },
   ];
 
   function icone(nome) {
@@ -71,9 +91,17 @@
       .map(function (item) {
         var atual = item.id === ativo;
         return (
-          '<a class="navbar__item' + (atual ? " is-ativo" : "") + '" href="' +
-          escapar(item.href) + '"' + (atual ? ' aria-current="page"' : "") + ">" +
-          icone(item.icone) + "<span>" + escapar(item.rotulo) + "</span></a>"
+          '<a class="navbar__item' +
+          (atual ? " is-ativo" : "") +
+          '" href="' +
+          escapar(item.href) +
+          '"' +
+          (atual ? ' aria-current="page"' : "") +
+          ">" +
+          icone(item.icone) +
+          "<span>" +
+          escapar(item.rotulo) +
+          "</span></a>"
         );
       })
       .join("");
@@ -89,14 +117,21 @@
     var app = o.variante === "app";
 
     var marca =
-      '<a class="navbar__marca" href="' + escapar(itens[0].href) + '" aria-label="MIGUFU - início">' +
-      '<img class="navbar__logo" src="' + imagens + 'logo-migufu.png" alt="">' +
-      '<img class="navbar__logo-texto" src="' + imagens + 'logo-migufu-texto.png" alt="MIGUFU">' +
+      '<a class="navbar__marca" href="' +
+      escapar(itens[0].href) +
+      '" aria-label="MIGUFU - início">' +
+      '<img class="navbar__logo" src="' +
+      imagens +
+      'logo-migufu.png" alt="">' +
+      '<img class="navbar__logo-texto" src="' +
+      imagens +
+      'logo-migufu-texto.png" alt="MIGUFU">' +
       "</a>";
 
     var menu =
       '<nav class="navbar__menu" aria-label="Navegação principal">' +
-      montarLinks(itens, o.ativo) + "</nav>";
+      montarLinks(itens, o.ativo) +
+      "</nav>";
 
     var classes = "navbar";
     if (app) classes += " navbar--app";
@@ -104,27 +139,37 @@
 
     if (app) {
       el.innerHTML =
-        '<header class="' + classes + '">' +
-        '<button type="button" class="navbar__voltar" aria-label="Voltar">' + icone("voltar") + "</button>" +
-        marca + menu +
-        '<button type="button" class="navbar__notificacoes" aria-label="Notificações">' +
-        icone("sino") + '<span class="navbar__rotulo-desktop">Notificações</span></button>' +
+        '<header class="' +
+        classes +
+        '">' +
+        marca +
+        menu +
+        '<button type="button" class="navbar__sair">' +
+        icone("sair") +
+        "<span>Sair</span></button>" +
         "</header>";
 
-      el.querySelector(".navbar__voltar").addEventListener("click", function () {
-        if (typeof o.aoVoltar === "function") o.aoVoltar();
-        else window.history.back();
+      el.querySelector(".navbar__sair").addEventListener("click", function () {
+        if (typeof o.aoSair === "function") {
+          o.aoSair();
+        } else {
+          // TODO: encerrar a sessão no back-end.
+          window.location.href = "login.html";
+        }
       });
-      el.querySelector(".navbar__notificacoes").addEventListener("click", function () {
-        // TODO: abrir a lista de notificações quando a tela existir
-        if (typeof o.aoNotificacoes === "function") o.aoNotificacoes();
-      });
+
       return;
     }
 
     el.innerHTML =
-      '<header class="' + classes + '">' + marca + menu +
-      '<button type="button" class="navbar__sair">' + icone("sair") + "<span>Sair</span></button>" +
+      '<header class="' +
+      classes +
+      '">' +
+      marca +
+      menu +
+      '<button type="button" class="navbar__sair">' +
+      icone("sair") +
+      "<span>Sair</span></button>" +
       "</header>";
 
     el.querySelector(".navbar__sair").addEventListener("click", function () {
