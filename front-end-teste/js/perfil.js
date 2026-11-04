@@ -328,11 +328,9 @@
             </div>
 
             <button
-              class="perfil__editar-foto"
               type="button"
               id="perfil-mudar-foto"
               aria-label="Escolher foto de perfil">
-              ${Icones.svg("editar")}
             </button>
 
             <input
@@ -346,13 +344,6 @@
 
           <div class="perfil__linha-titulo">
             <h3>Sobre mim</h3>
-
-            <button
-              type="button"
-              id="perfil-editar-bio"
-              aria-label="Editar minha biografia">
-              ${Icones.svg("editar")}
-            </button>
           </div>
 
           <p class="perfil__bio" id="perfil-bio"></p>
@@ -421,10 +412,6 @@
     `;
 
     buscar("perfil-editar").addEventListener("click", () => mostrarEdicao());
-
-    buscar("perfil-editar-bio").addEventListener("click", () =>
-      mostrarEdicao("bio"),
-    );
 
     buscar("perfil-senha").addEventListener("click", abrirModalSenha);
 
