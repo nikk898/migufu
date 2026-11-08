@@ -1,8 +1,4 @@
 node_modules
 package-lock.json
 .env
-<<<<<<< HEAD
 repomix-output.xml
-=======
-.claude
->>>>>>> 660e3fe (requirements)
