@@ -205,3 +205,13 @@ CREATE INDEX idx_vinculo_admin
 CREATE UNIQUE INDEX uq_vinculo_ativo
     ON vinculo_migufu(voluntario_id, estudante_internacional_id)
     WHERE ativo = TRUE;
+
+
+ALTER TABLE base_user ADD COLUMN genero VARCHAR(30);
+
+ALTER TABLE estudante_internacional ADD COLUMN sobre_mim TEXT;
+ALTER TABLE estudante_internacional ADD COLUMN passaporte VARCHAR(20) UNIQUE;
+ALTER TABLE estudante_internacional ALTER COLUMN cpf DROP NOT NULL;
+ALTER TABLE estudante_internacional
+    ADD CONSTRAINT chk_estudante_documento
+    CHECK (cpf IS NOT NULL OR passaporte IS NOT NULL);
