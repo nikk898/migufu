@@ -144,12 +144,17 @@
 
     mostrarErro("");
 
-    // Mantém a lógica atual do protótipo.
-    // TODO: enviar a mensagem à API de suporte.
-    form.reset();
+    var botao = document.querySelector(".ajuda__enviar");
+    botao.disabled = true;
 
-    sucesso.textContent = traducao().sucesso;
-    sucesso.hidden = false;
+    Api.chamar("/suporte", { method: "POST", body: { mensagem: mensagem } })
+      .then(function () {
+        form.reset();
+        sucesso.textContent = traducao().sucesso;
+        sucesso.hidden = false;
+      })
+      .catch(function (e) { mostrarErro(e.message); })
+      .finally(function () { botao.disabled = false; });
   }
 
   document.addEventListener("DOMContentLoaded", function () {

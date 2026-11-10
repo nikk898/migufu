@@ -5,7 +5,7 @@ class ErroHttp extends Error {
   }
 }
 
-const IDIOMAS = ['Portugues', 'Espanhol', 'Ingles', 'Mandarim', 'Latim', 'Frances', 'Japones', 'Russo'];
+const IDIOMAS = ['Portugues', 'Espanhol', 'Ingles', 'Mandarim', 'Latim', 'Frances', 'Japones', 'Russo', 'Alemao', 'Italiano', 'Libras'];
 const NIVEIS = ['Basico', 'Intermediario', 'Avancado', 'Fluente', 'Nativo'];
 const CONTROLE = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g;
 const semAcento = (s) => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -31,8 +31,11 @@ function email(valor) {
 }
 
 function telefone(valor) {
-  const d = texto(valor, 'Telefone', { max: 30 }).replace(/\D/g, '');
-  if (d.length < 10 || d.length > 13) throw new ErroHttp(400, 'Telefone inválido');
+  const bruto = texto(valor, 'Telefone', { max: 30 });
+  let d = bruto.replace(/\D/g, '');
+  // sem "+" = número brasileiro: acrescenta o 55 (necessário para o wa.me)
+  if (!bruto.startsWith('+') && d.length <= 11) d = '55' + d;
+  if (d.length < 10 || d.length > 15) throw new ErroHttp(400, 'Telefone inválido');
   return d;
 }
 

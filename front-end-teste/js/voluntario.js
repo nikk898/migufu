@@ -18,35 +18,26 @@
 
   // Dados de exemplo (iguais aos do protótipo do Figma).
   // TODO: substituir por chamadas ao back-end quando a API estiver pronta.
-  var dadosExemplo = {
-    nome: "João",
-    status: "pendente", // "pendente" | "apto"
-    migufus: [
-      {
-        id: "est-jean",
-        nome: "Jean Martin",
-        curso: "Sistemas de Informação",
-        pais: "França",
-        idiomas: "Francês (Nativo), Inglês (Intermediário)",
-        interesses: "Jogos de tabuleiro, música, parques, corrida, animes",
-        bio: "Olá! Sou o Jean, vim da França para estudar na UFU. Gosto de fazer novos amigos, praticar esportes, ouvir música e assistir animes. Se quiser jogar um jogo de tabuleiro ou conversar, me dê um oi!",
-        telefone: "5500000000000", // exemplo (inválido de propósito)
-        email: "contato@exemplo.com", // exemplo
-      },
-      {
-        id: "est-sofia",
-        nome: "Sofia Rodriguez",
-        curso: "Relações Internacionais",
-        pais: "Argentina",
-        idiomas: "Espanhol (Nativo), Português (Intermediário)",
-        interesses: "Música, cinema, viagens, leitura",
-        bio: "Olá! Sou a Sofia, estudante de intercâmbio na UFU. Gosto de conhecer pessoas, explorar a cidade, ouvir música e fazer novas amizades.",
-        telefone: "",
-        email: "sofia@example.com",
-      },
-    ],
-  };
+  // Preenchido por GET /api/painel/voluntario
+  var dados = { nome: "", status: "pendente", migufus: [] };
 
+  // Converte o status do banco nos estados da tela.
+  function statusDaTela(r) {
+    if (r.status_aptidao === "Apto") return "apto";
+    if (r.status_aptidao === "Nao Apto") return "reprovado";
+    return r.certificado_enviado ? "em_analise" : "pendente";
+  }
+
+  function carregarPainel() {
+    return Api.chamar("/painel/voluntario")
+      .then(function (r) {
+        dados.nome = String(r.nome || "").split(" ")[0];
+        dados.status = statusDaTela(r);
+        dados.migufus = r.migufus;
+        preencherTela(dados);
+      })
+      .catch(function (e) { alert(e.message); });
+  }
   function campo(nome) {
     return document.querySelector('[data-vol="' + nome + '"]');
   }
@@ -260,21 +251,15 @@
     campo("vazio").hidden = temMigufus;
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
     Navbar.render("#navbar", {
       variante: "app",
       itens: Navbar.ITENS_VOLUNTARIO,
       ativo: "inicio",
     });
 
-    var estado = new URLSearchParams(window.location.search).get("estado");
-    var dados = Object.assign({}, dadosExemplo);
-
-    if (["apto", "pendente", "reprovado", "em_analise"].includes(estado)) {
-      dados.status = estado;
-    }
-
     configurarAcao(dados);
     preencherTela(dados);
+    carregarPainel();
   });
 })();

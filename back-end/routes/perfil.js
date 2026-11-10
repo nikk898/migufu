@@ -4,7 +4,7 @@ const db = require('../db');
 const { autenticar } = require('../middlewares/auth');
 const { limiteRedefinir } = require('../middlewares/limites');
 const v = require('../utils/validacao');
-const { resolverCampus, vincularInteresses } = require('../utils/dados');
+const { resolverCampus, vincularInteresses, idiomasTexto } = require('../utils/dados');
 
 const router = express.Router();
 router.use(autenticar);
@@ -57,6 +57,8 @@ router.put('/', async (req, res) => {
   const bio = vazioOuTexto(b.bio, 'Sobre mim', 500);
   const expectativas = vazioOuTexto(b.expectativas, 'Expectativas', 2000);
   const disponivel = typeof b.disponivel === 'boolean' ? b.disponivel : null;
+  const pais = b.pais === undefined ? null : v.texto(b.pais, 'País de origem', { max: 100 });
+  const matricula = b.matricula === undefined ? null : v.texto(b.matricula, 'Matrícula', { max: 50 });
 
   await db.transacao(async (c) => {
     const campusId = b.campus === undefined ? null : (await resolverCampus(c, b.campus)).id;
@@ -82,14 +84,15 @@ router.put('/', async (req, res) => {
         [id, curso, periodo, campusId, bio, expectativas, disponivel]
       );
     } else if (u.rows[0].perfil === 'Internacional') {
-      await c.query(
+        await c.query(
         `UPDATE estudante_internacional
             SET curso = COALESCE($2, curso), campus_id = COALESCE($3, campus_id),
                 sobre_mim = COALESCE($4, sobre_mim),
                 expectativas_do_curso = COALESCE($5, expectativas_do_curso),
+                pais_origem = COALESCE($6, pais_origem), matricula = COALESCE($7, matricula),
                 ultima_atualizacao = now()
           WHERE usuario_id = $1`,
-        [id, curso, campusId, bio, expectativas]
+        [id, curso, campusId, bio, expectativas, pais, matricula]
       );
     }
   });
@@ -194,7 +197,18 @@ router.get('/publico/:id', async (req, res) => {
       WHERE ui.usuario_id = $1 ORDER BY i.nome`, [alvo]);
   const idiomas = await db.query('SELECT idioma, nivel FROM usuario_idioma WHERE usuario_id = $1', [alvo]);
 
-  res.json({ ...p.rows[0], interesses: interesses.rows.map((i) => i.nome), idiomas: idiomas.rows });
+  const x = p.rows[0];
+  res.json({
+    id: x.id,
+    nome: x.nome,
+    tipo: x.perfil === 'Internacional' ? 'estudante' : 'voluntario',
+    bio: x.bio,
+    curso: x.curso,
+    campus: x.campus,
+    pais: x.pais_origem,
+    idiomas: idiomasTexto(idiomas.rows),
+    interesses: interesses.rows.map((i) => i.nome),
+  });
 });
 
 module.exports = router;

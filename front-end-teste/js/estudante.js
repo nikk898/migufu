@@ -2,32 +2,18 @@
 (function () {
   "use strict";
 
-  // Dados de demonstração; no futuro serão retornados pela API.
-  const dadosExemplo = {
-    nome: "Jean Martin",
-    voluntarios: [
-      {
-        id: "vol-joao",
-        nome: "João Silva",
-        curso: "Sistemas de Informação",
-        idiomas: "Português (Nativo), Inglês (Intermediário)",
-        interesses: "Jogos de tabuleiro, festas, crochê, esportes",
-        bio: "Olá! Sou estudante de Sistemas de Informação na UFU. Gosto de praticar esportes, fazer amizades e conhecer pessoas de outros países.",
-        telefone: "+5534000000000", // exemplo (inválido de propósito)
-        email: "joao.silva@example.com",
-      },
-      {
-        id: "vol-mariana",
-        nome: "Mariana Oliveira",
-        curso: "Psicologia",
-        idiomas: "Português (Nativo), Espanhol (Intermediário)",
-        interesses: "Música, cinema, viagens, culinária",
-        bio: "Oi! Sou a Mariana, estudante da UFU. Adoro conhecer novas culturas, mostrar a cidade e ajudar estudantes internacionais a se adaptarem à universidade.",
-        telefone: "+5534000000000",
-        email: "mariana.oliveira@example.com",
-      },
-    ],
-  };
+  // Preenchido por GET /api/painel/estudante
+  const dados = { nome: "", voluntarios: [] };
+
+  function carregar() {
+    return Api.chamar("/painel/estudante")
+      .then(function (r) {
+        dados.nome = r.nome;
+        dados.voluntarios = r.migufus;
+      })
+      .catch(function (e) { alert(e.message); })
+      .then(renderizar);
+  }
 
   // Tradução dos textos desta página (não da navbar compartilhada).
   const traducoes = {
@@ -228,14 +214,12 @@
       { pt: "pt-BR", en: "en", es: "es", fr: "fr" }[idioma] || "pt-BR";
 
     document.querySelector(".estudante__saudacao").textContent =
-      t.ola + ", " + dadosExemplo.nome + "!";
+      t.ola + ", " + dados.nome + "!";
 
     document.getElementById("titulo-migufus").textContent = t.titulo;
     document.getElementById("estudante-vazio-texto").textContent = t.vazio;
 
-    // Estado de demonstração. Sem parâmetro, exibe os vínculos de exemplo.
-    const estado = new URLSearchParams(window.location.search).get("estado");
-    const voluntarios = estado === "aguardando" ? [] : dadosExemplo.voluntarios;
+    const voluntarios = dados.voluntarios;
     const temVinculo = voluntarios.length > 0;
 
     const chip = document.getElementById("estudante-status");
@@ -290,6 +274,6 @@
     });
 
     // Monta a tela com o idioma selecionado
-    renderizar();
+    carregar();
   });
 })();

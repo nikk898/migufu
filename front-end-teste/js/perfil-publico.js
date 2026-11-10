@@ -14,36 +14,12 @@
 
   // Fallback para link aberto diretamente. IDs fictícios e exclusivos deste protótipo.
   // Ao clicar em um card, os campos atuais dele têm prioridade sobre estes exemplos.
-  const exemplos = {
-    "est-jean": {
-      id: "est-jean", tipo: "estudante", nome: "Jean Martin",
-      curso: "Sistemas de Informação", pais: "França",
-      idiomas: "Francês (Nativo), Inglês (Intermediário)",
-      interesses: "Jogos de tabuleiro, música, parques, corrida, animes",
-      bio: "Olá! Sou o Jean, vim da França para estudar na UFU. Gosto de fazer novos amigos, praticar esportes, ouvir música e assistir animes."
-    },
-    "est-sofia": {
-      id: "est-sofia", tipo: "estudante", nome: "Sofia Rodriguez",
-      curso: "Relações Internacionais", pais: "Argentina",
-      idiomas: "Espanhol (Nativo), Português (Intermediário)",
-      interesses: "Música, cinema, viagens, leitura",
-      bio: "Olá! Sou a Sofia, estudante de intercâmbio na UFU. Gosto de conhecer pessoas, explorar a cidade, ouvir música e fazer novas amizades."
-    },
-    "vol-joao": {
-      id: "vol-joao", tipo: "voluntario", nome: "João Silva",
-      curso: "Sistemas de Informação",
-      idiomas: "Português (Nativo), Inglês (Intermediário)",
-      interesses: "Jogos de tabuleiro, festas, crochê, esportes",
-      bio: "Olá! Sou estudante de Sistemas de Informação na UFU. Gosto de praticar esportes, fazer amizades e conhecer pessoas de outros países."
-    },
-    "vol-mariana": {
-      id: "vol-mariana", tipo: "voluntario", nome: "Mariana Oliveira",
-      curso: "Psicologia",
-      idiomas: "Português (Nativo), Espanhol (Intermediário)",
-      interesses: "Música, cinema, viagens, culinária",
-      bio: "Oi! Sou a Mariana, estudante da UFU. Adoro conhecer novas culturas, mostrar a cidade e ajudar estudantes internacionais a se adaptarem à universidade."
-    }
-  };
+  
+  function obterPerfil(id) {
+    if (!idValido(id)) return Promise.resolve(null);
+    return Api.chamar("/perfil/publico/" + encodeURIComponent(id))
+      .catch(function () { return null; });
+  }
 
   const textos = {
     pt: {
@@ -229,37 +205,38 @@
     document.getElementById("perfil-publico-academico-titulo").textContent = t.academico;
     document.title = "MIGUFU - " + t.titulo;
 
-    const pessoa = obterPerfil(id);
-    if (!pessoa) {
-      const erro = document.getElementById("perfil-publico-erro");
-      erro.textContent = t.naoEncontrado;
-      erro.hidden = false;
-      return;
-    }
+    obterPerfil(id).then(function (pessoa) {
+      if (!pessoa) {
+        const erro = document.getElementById("perfil-publico-erro");
+        erro.textContent = t.naoEncontrado;
+        erro.hidden = false;
+        return;
+      }
 
-    document.getElementById("perfil-publico-conteudo").hidden = false;
-    document.getElementById("perfil-publico-avatar").textContent = iniciais(pessoa.nome);
-    document.getElementById("perfil-publico-nome").textContent = pessoa.nome;
-    document.getElementById("perfil-publico-bio").textContent = pessoa.bio || t.semBio;
+      document.getElementById("perfil-publico-conteudo").hidden = false;
+      document.getElementById("perfil-publico-avatar").textContent = iniciais(pessoa.nome);
+      document.getElementById("perfil-publico-nome").textContent = pessoa.nome;
+      document.getElementById("perfil-publico-bio").textContent = pessoa.bio || t.semBio;
 
-    const tags = document.getElementById("perfil-publico-interesses");
-    const interesses = (Array.isArray(pessoa.interesses) ? pessoa.interesses : String(pessoa.interesses || "").split(","))
-      .map(interesse => String(interesse).trim())
-      .filter(Boolean);
-    if (!interesses.length) tags.textContent = t.semInteresses;
-    interesses.forEach(interesse => {
-      const tag = document.createElement("span");
-      tag.className = "perfil__tag";
-      tag.textContent = traduzirTermo(interesse, idioma);
-      tags.appendChild(tag);
+      const tags = document.getElementById("perfil-publico-interesses");
+      const interesses = (Array.isArray(pessoa.interesses) ? pessoa.interesses : String(pessoa.interesses || "").split(","))
+        .map(interesse => String(interesse).trim())
+        .filter(Boolean);
+      if (!interesses.length) tags.textContent = t.semInteresses;
+      interesses.forEach(interesse => {
+        const tag = document.createElement("span");
+        tag.className = "perfil__tag";
+        tag.textContent = traduzirTermo(interesse, idioma);
+        tags.appendChild(tag);
+      });
+
+      const lista = document.getElementById("perfil-publico-dados");
+      linha(lista, t.tipo, t[pessoa.tipo]);
+      linha(lista, t.curso, traduzirTermo(pessoa.curso, idioma));
+      linha(lista, t.campus, pessoa.campus);
+      linha(lista, t.pais, traduzirTermo(pessoa.pais, idioma));
+      linha(lista, t.idiomas, traduzirIdiomas(pessoa.idiomas, idioma));
     });
-
-    const lista = document.getElementById("perfil-publico-dados");
-    linha(lista, t.tipo, t[pessoa.tipo]);
-    linha(lista, t.curso, traduzirTermo(pessoa.curso, idioma));
-    linha(lista, t.campus, pessoa.campus);
-    linha(lista, t.pais, traduzirTermo(pessoa.pais, idioma));
-    linha(lista, t.idiomas, traduzirIdiomas(pessoa.idiomas, idioma));
   }
 
   global.PerfilPublico = { guardar, url };

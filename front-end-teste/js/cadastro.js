@@ -158,12 +158,20 @@ function configurarVinculoVoluntario() {
   }
 
   /* ---------- Envio ---------- */
+  const rotuloDe = (lista, valor) =>
+    (opcoes[lista] || []).find((o) => o.valor === valor)?.rotulo || valor;
+
   function coletarDados() {
     const formData = new FormData(form);
     const dados = { perfil };
     for (const [chave, valor] of formData.entries()) {
       if (!['idioma', 'nivel', 'interesses'].includes(chave)) dados[chave] = valor.trim();
     }
+    // O banco guarda o texto ("Sistemas de Informação"), não o código do select.
+    dados.genero = rotuloDe('generos', dados.genero);
+    dados.pais = rotuloDe('paises', dados.pais);
+    dados.curso = rotuloDe('cursos', dados.curso);
+    dados.campus = rotuloDe('campus', dados.campus);
     dados.idiomas = [...listaIdiomas.querySelectorAll('.cadastro__idioma')]
       .map((linha) => ({
         idioma: linha.querySelector('[name="idioma"]').value,
@@ -171,7 +179,34 @@ function configurarVinculoVoluntario() {
       }))
       .filter((item) => item.idioma && item.nivel);
     dados.interesses = formData.getAll('interesses');
+    dados.idioma_site = document.getElementById('idioma-cadastro')?.value; // só existe no estudante
     return dados;
+  }
+
+  function mostrarErroEnvio(mensagem) {
+    let el = document.getElementById('erro-envio');
+    if (!el) {
+      el = document.createElement('p');
+      el.id = 'erro-envio';
+      el.className = 'campo__erro';
+      el.setAttribute('role', 'alert');
+      form.querySelector('button[type="submit"]').before(el);
+    }
+    el.textContent = mensagem;
+    el.hidden = !mensagem;
+  }
+
+  function enviarCadastro(dados) {
+    const botao = form.querySelector('button[type="submit"]');
+    botao.disabled = true;
+    mostrarErroEnvio('');
+    return Api.chamar('/cadastro/' + (perfil === 'estudante' ? 'estudante' : 'voluntario'), {
+      method: 'POST',
+      body: dados,
+    })
+      .then(() => { window.location.href = 'login.html'; })
+      .catch((e) => mostrarErroEnvio(e.message))
+      .finally(() => { botao.disabled = false; });
   }
 
   function enviarCadastro(dados) {

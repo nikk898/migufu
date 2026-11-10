@@ -207,6 +207,8 @@ CREATE UNIQUE INDEX uq_vinculo_ativo
     WHERE ativo = TRUE;
 
 
+-- RODAR NO BANCO DE DADOS PARA ADICIONAR CAMPOS QUE O FRONT PUXA
+
 ALTER TABLE base_user ADD COLUMN genero VARCHAR(30);
 
 ALTER TABLE estudante_internacional ADD COLUMN sobre_mim TEXT;
@@ -215,3 +217,13 @@ ALTER TABLE estudante_internacional ALTER COLUMN cpf DROP NOT NULL;
 ALTER TABLE estudante_internacional
     ADD CONSTRAINT chk_estudante_documento
     CHECK (cpf IS NOT NULL OR passaporte IS NOT NULL);
+
+-- idiomas que existem no select do front mas não no enum
+ALTER TYPE tipo_idioma ADD VALUE IF NOT EXISTS 'Alemao';
+ALTER TYPE tipo_idioma ADD VALUE IF NOT EXISTS 'Italiano';
+ALTER TYPE tipo_idioma ADD VALUE IF NOT EXISTS 'Libras';
+
+-- colunas que o tutorial usa em admin-suporte (o .sql que você mandou não tinha)
+ALTER TABLE mensagem_suporte
+  ADD COLUMN IF NOT EXISTS resolvido_em TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS resolvido_por INTEGER REFERENCES base_user(id);

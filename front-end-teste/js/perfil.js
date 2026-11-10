@@ -10,57 +10,99 @@
   const interessesDisponiveis = window.CADASTRO_DADOS.interesses;
   const inicio = estudante ? "estudante.html" : "voluntario.html";
 
-  // Dados fictícios para desenvolvimento.
-  // TODO: substituir pelos dados da API.
-  const exemplos = {
-    estudante: {
-      nome: "Jean Martin",
-      documento: "000.000.000-00",
-      email: "jean.martin@ufu.br",
-      telefone: "+33 6 1234 5678",
-      genero: "masculino",
-      pais: "FR",
-      vinculo: "estudante",
-      matricula: "12345BSI678",
-      curso: "sistemas-de-informacao",
-      periodo: "4",
-      campus: "santa-monica",
-      idiomas: [
-        { idioma: "frances", nivel: "nativo" },
-        { idioma: "ingles", nivel: "intermediario" },
-      ],
-      interesses: ["Jogos de tabuleiro", "Música", "Parques", "Animes"],
-      bio: "Olá! Sou o Jean, vim da França para estudar na UFU. Gosto de fazer novos amigos, praticar esportes e conhecer novas culturas.",
-      expectativas:
-        "Quero conhecer pessoas e me integrar à vida universitária.",
-    },
-
-    voluntario: {
-      nome: "João Silva",
-      documento: "000.000.000-00",
-      email: "joao.silva@ufu.br",
-      telefone: "+55 34 91234 5678",
-      genero: "masculino",
-      pais: "BR",
-      vinculo: "estudante",
-      matricula: "",
-      curso: "sistemas-de-informacao",
-      periodo: "4",
-      campus: "santa-monica",
-      idiomas: [
-        { idioma: "portugues", nivel: "nativo" },
-        { idioma: "ingles", nivel: "intermediario" },
-      ],
-      interesses: ["Jogos de tabuleiro", "Esportes", "Música"],
-      bio: "Olá! Sou estudante de Sistemas de Informação na UFU. Gosto de praticar esportes e fazer novas amizades.",
-      expectativas:
-        "Quero ajudar estudantes internacionais a se adaptarem à UFU.",
-    },
+    // Dados do usuário logado (preenchidos por GET /api/perfil).
+  const usuario = {
+    nome: "", documento: "", email: "", telefone: "", genero: "", pais: "",
+    vinculo: estudante ? "estudante" : "", matricula: "", curso: "", periodo: "",
+    campus: "", idiomas: [], interesses: [], bio: "", expectativas: "",
   };
+  let interessesComId = []; // [{ id, nome }]: o id é necessário para o DELETE
 
-  const usuario = JSON.parse(
-    JSON.stringify(exemplos[estudante ? "estudante" : "voluntario"]),
-  );
+  const norm = (s) =>
+    String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+  // Texto do banco (ou valor) -> valor do select. Ex.: "Santa Mônica" -> "santa-monica"
+  function valorDe(lista, texto) {
+    const alvo = norm(texto);
+    const item = (opcoes[lista] || []).find(
+      (o) => norm(o.rotulo) === alvo || norm(o.valor) === alvo,
+    );
+    return item ? item.valor : "";
+  }
+
+  // Valor do select -> texto que o banco guarda
+  function rotuloOuValor(lista, valor) {
+    const item = (opcoes[lista] || []).find((o) => o.valor === valor);
+    return item ? item.rotulo : valor || "";
+  }
+
+  function aplicarApi(r) {
+    usuario.nome = r.nome || "";
+    usuario.documento = r.cpf
+      ? r.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")
+      : r.passaporte || "";
+    usuario.email = r.email || "";
+    usuario.telefone = r.telefone ? "+" + r.telefone : "";
+    usuario.genero = valorDe("generos", r.genero);
+    usuario.pais = valorDe("paises", r.pais_origem);
+    usuario.vinculo = estudante ? "estudante" : valorDe("vinculos", r.vinculo);
+    usuario.matricula = r.matricula || "";
+    usuario.curso = valorDe("cursos", r.curso);
+    usuario.periodo = r.periodo ? String(r.periodo) : "";
+    usuario.campus = valorDe("campus", r.campus);
+    usuario.idiomas = (r.idiomas || []).map((i) => ({
+      idioma: valorDe("idiomas", i.idioma),
+      nivel: valorDe("niveis", i.nivel),
+    }));
+    interessesComId = r.interesses || [];
+    usuario.interesses = interessesComId.map((i) => i.nome);
+    usuario.bio = r.bio || "";
+    usuario.expectativas = r.expectativas || "";
+  }
+
+  function carregarPerfil() {
+    return Api.chamar("/perfil")
+      .then(function (r) {
+        aplicarApi(r);
+        renderizarPerfil();
+      })
+      .catch(function (e) { aviso(e.message); });
+  }
+
+  // PUT dos dados + DELETE/POST só do que mudou em idiomas e interesses.
+  // Remove antes de adicionar (para não estourar o limite de interesses).
+  function salvarNaApi(corpo, pares, interessesNovos) {
+    const idiomasAntigos = usuario.idiomas;
+    let cadeia = Api.chamar("/perfil", { method: "PUT", body: corpo });
+
+    idiomasAntigos
+      .filter((a) => !pares.some((p) => p.idioma === a.idioma))
+      .forEach((a) => {
+        cadeia = cadeia.then(() =>
+          Api.chamar("/perfil/idiomas/" + encodeURIComponent(a.idioma), { method: "DELETE" }));
+      });
+
+    pares
+      .filter((p) => !idiomasAntigos.some((a) => a.idioma === p.idioma && a.nivel === p.nivel))
+      .forEach((p) => {
+        cadeia = cadeia.then(() =>
+          Api.chamar("/perfil/idiomas", { method: "POST", body: { idioma: p.idioma, nivel: p.nivel } }));
+      });
+
+    interessesComId
+      .filter((i) => !interessesNovos.includes(i.nome))
+      .forEach((i) => {
+        cadeia = cadeia.then(() =>
+          Api.chamar("/perfil/interesses/" + i.id, { method: "DELETE" }));
+      });
+
+    const adicionar = interessesNovos.filter((n) => !usuario.interesses.includes(n));
+    if (adicionar.length) {
+      cadeia = cadeia.then(() =>
+        Api.chamar("/perfil/interesses", { method: "POST", body: { interesses: adicionar } }));
+    }
+    return cadeia;
+  }
 
   let fotoTemporaria = "";
 
@@ -277,9 +319,18 @@
         return;
       }
 
-      // TODO: integração com a API de autenticação.
-      // O servidor deverá conferir a senha atual,
-      // validar a nova senha e atualizar seu hash.
+      const botao = form.querySelector('[type="submit"]');
+      botao.disabled = true;
+      Api.chamar("/perfil/senha", {
+        method: "PUT",
+        body: { senha_atual: atual, nova_senha: nova },
+      })
+        .then(function () {
+          modal.fechar();
+          aviso("Senha alterada com sucesso.");
+        })
+        .catch(function (e) { mostrarErro(e.message); })
+        .finally(function () { botao.disabled = false; });
       mostrarErro("A alteração de senha ainda não está disponível.");
     });
 
@@ -416,7 +467,7 @@
     buscar("perfil-senha").addEventListener("click", abrirModalSenha);
 
     buscar("perfil-sair").addEventListener("click", () => {
-      // TODO: encerrar a sessão real no back-end.
+      localStorage.removeItem("token");
       window.location.href = "login.html";
     });
 
@@ -801,60 +852,67 @@
     buscar("perfil-titulo").textContent = "Meu perfil";
   }
 
-  // Salva apenas na memória da página.
+    // Valida, envia ao back-end e recarrega o perfil.
   function salvarFormulario(evento) {
     evento.preventDefault();
 
     const form = evento.currentTarget;
-
     if (!form.reportValidity()) return;
 
     const dados = new FormData(form);
 
-    const pares = [...form.querySelectorAll(".perfil__idioma-linha")].map(
-      (linha) => ({
-        idioma: linha.querySelector('[name="idioma"]').value,
-        nivel: linha.querySelector('[name="nivel"]').value,
-      }),
-    );
+    const pares = [...form.querySelectorAll(".perfil__idioma-linha")].map((linha) => ({
+      idioma: linha.querySelector('[name="idioma"]').value,
+      nivel: linha.querySelector('[name="nivel"]').value,
+    }));
 
     const idiomas = pares.map((item) => item.idioma);
-
     if (new Set(idiomas).size !== idiomas.length) {
       aviso("Não selecione o mesmo idioma duas vezes.");
       return;
     }
 
     const digitos = String(dados.get("telefone") || "").replace(/\D/g, "");
-
     if (digitos.length < 8 || digitos.length > 15) {
       aviso("Informe um telefone válido, com DDD ou código internacional.");
       return;
     }
 
-    // Somente os campos permitidos são atualizados.
-    ["nome", "telefone", "genero", "bio", "campus"].forEach((chave) => {
-      usuario[chave] = String(dados.get(chave) || "").trim();
-    });
+    const corpo = {
+      nome: String(dados.get("nome") || "").trim(),
+      telefone: String(dados.get("telefone") || "").trim(),
+      bio: String(dados.get("bio") || "").trim(),
+      campus: rotuloOuValor("campus", dados.get("campus")),
+    };
+    const genero = rotuloOuValor("generos", dados.get("genero"));
+    if (genero) corpo.genero = genero; // gênero é opcional no formulário
 
     if (estudante) {
-      usuario.pais = String(dados.get("pais") || "");
-      usuario.matricula = String(dados.get("matricula") || "").trim();
+      corpo.pais = rotuloOuValor("paises", dados.get("pais"));
+      corpo.matricula = String(dados.get("matricula") || "").trim();
     }
-
     if (estudante || usuario.vinculo === "estudante") {
-      usuario.curso = String(dados.get("curso") || "");
-      usuario.periodo = String(dados.get("periodo") || "");
+      corpo.curso = rotuloOuValor("cursos", dados.get("curso"));
+      corpo.periodo = String(dados.get("periodo") || "");
     }
 
-    usuario.idiomas = pares;
-    usuario.interesses = dados.getAll("interesses");
-
-    fecharEdicao();
-    renderizarPerfil();
-
+    const botao = form.querySelector('[type="submit"]');
+    botao.disabled = true;
     aviso("");
+
+    salvarNaApi(corpo, pares, dados.getAll("interesses"))
+      .then(carregarPerfil)
+      .then(function () {
+        fecharEdicao();
+        aviso("");
+      })
+      .catch(function (e) {
+        aviso(e.message);
+        return carregarPerfil();
+      })
+      .finally(function () { botao.disabled = false; });
   }
+ 
 
   function aoEscolherFoto(evento) {
     const arquivo = evento.target.files[0];
@@ -911,5 +969,6 @@
     }
 
     montarPagina();
+    carregarPerfil();
   });
 })();

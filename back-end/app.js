@@ -35,6 +35,10 @@ app.use('/api', limiteGeral);
 app.get('/api/saude', (req, res) => res.json({ ok: true }));
 app.use('/api/usuarios', require('./routes/usuarios'));
 app.use('/api/senha', require('./routes/senha'));
+app.use('/api/cadastro', require('./routes/cadastro'));
+app.use('/api/painel', require('./routes/painel'));
+app.use('/api/perfil', require('./routes/perfil'));
+app.use('/api/suporte', require('./routes/suporte'));
 
 // Descomente quando esses arquivos exportarem um router (module.exports = router):
 // app.use('/api/formulario', require('./routes/formulario'));
