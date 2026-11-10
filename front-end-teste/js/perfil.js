@@ -19,7 +19,8 @@
   let interessesComId = []; // [{ id, nome }]: o id é necessário para o DELETE
 
   const norm = (s) =>
-    String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+      .replace(/^campus[\s-]+/, ""); // "Campus Santa Mônica" == "Santa Mônica"
 
   // Texto do banco (ou valor) -> valor do select. Ex.: "Santa Mônica" -> "santa-monica"
   function valorDe(lista, texto) {
@@ -331,7 +332,6 @@
         })
         .catch(function (e) { mostrarErro(e.message); })
         .finally(function () { botao.disabled = false; });
-      mostrarErro("A alteração de senha ainda não está disponível.");
     });
 
     modal.abrir();
@@ -726,8 +726,6 @@
         "Período",
         "periodos",
         usuario.periodo,
-        false,
-        true,
       );
     }
 

@@ -209,11 +209,6 @@ function configurarVinculoVoluntario() {
       .finally(() => { botao.disabled = false; });
   }
 
-  function enviarCadastro(dados) {
-    // TODO: integrar com o back-end quando a rota de cadastro existir.
-    return Promise.resolve(dados);
-  }
-
   /* ---------- Eventos ---------- */
   form.addEventListener('input', (e) => {
     const campo = e.target;

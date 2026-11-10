@@ -1,24 +1,18 @@
 /*
- * Perfil público MIGUFU — navegação dos cards, visualização e dados de teste.
- * Guarda somente campos públicos, jamais CPF, e-mail, telefone ou matrícula.
- * TODO (backend): substituir obterPerfil() por GET /usuarios/:id/perfil-publico,
- * com autorização e seleção de campos no servidor.
+ * Perfil público MIGUFU — carrega GET /api/perfil/publico/:id.
+ * O servidor decide quem pode ver e devolve só campos públicos
+ * (nunca CPF, e-mail, telefone ou matrícula).
  */
 (function (global) {
   "use strict";
 
-  const CHAVE = "migufu-perfil-publico:";
-  const CAMPOS_PUBLICOS = [
-    "id", "tipo", "nome", "bio", "curso", "campus", "pais", "idiomas", "interesses"
-  ];
+  function idValido(id) {
+    return typeof id === "string" && /^\d{1,10}$/.test(id);
+  }
 
-  // Fallback para link aberto diretamente. IDs fictícios e exclusivos deste protótipo.
-  // Ao clicar em um card, os campos atuais dele têm prioridade sobre estes exemplos.
-  
   function obterPerfil(id) {
     if (!idValido(id)) return Promise.resolve(null);
-    return Api.chamar("/perfil/publico/" + encodeURIComponent(id))
-      .catch(function () { return null; });
+    return Api.chamar("/perfil/publico/" + id).catch(function () { return null; });
   }
 
   const textos = {
@@ -83,54 +77,13 @@
     "crochê": ["Crochet", "Croché", "Crochet"]
   };
 
-  function idValido(id) {
-    return typeof id === "string" && /^[a-z0-9_-]{1,80}$/i.test(id);
-  }
-
-  function selecionarPublicos(pessoa, tipo) {
-    const seguro = {};
-    for (const campo of CAMPOS_PUBLICOS) {
-      if (campo === "tipo") {
-        seguro.tipo = tipo === "estudante" ? "estudante" : "voluntario";
-      } else if (typeof pessoa[campo] === "string") {
-        seguro[campo] = pessoa[campo].slice(0, campo === "bio" ? 2000 : 700);
-      }
-    }
-    return seguro;
-  }
-
-  function guardar(pessoa, tipo) {
-    if (!pessoa || !idValido(pessoa.id)) return;
-    try {
-      sessionStorage.setItem(CHAVE + pessoa.id, JSON.stringify(selecionarPublicos(pessoa, tipo)));
-    } catch (_) {
-      // O fallback dos quatro exemplos permite navegar sem sessionStorage.
-    }
-  }
-
   function url(id, origem) {
     const busca = new URLSearchParams();
-    busca.set("id", id);
+    busca.set("id", String(id));
     busca.set("origem", origem === "estudante" ? "estudante" : "voluntario");
     const estado = new URLSearchParams(global.location.search).get("estado");
     if (estado && /^[a-z_]{1,30}$/i.test(estado)) busca.set("estado", estado);
     return "perfil-publico.html?" + busca.toString();
-  }
-
-  function obterPerfil(id) {
-    if (!idValido(id)) return null;
-    try {
-      const salvo = sessionStorage.getItem(CHAVE + id);
-      if (salvo) {
-        const pessoa = JSON.parse(salvo);
-        if (pessoa && pessoa.id === id && pessoa.nome && ["voluntario", "estudante"].includes(pessoa.tipo)) {
-          return selecionarPublicos(pessoa, pessoa.tipo);
-        }
-      }
-    } catch (_) {
-      // Conteúdo da sessão indisponível.
-    }
-    return exemplos[id] || null;
   }
 
   function iniciais(nome) {
@@ -239,6 +192,6 @@
     });
   }
 
-  global.PerfilPublico = { guardar, url };
+  global.PerfilPublico = { url };
   document.addEventListener("DOMContentLoaded", renderizar);
 })(window);

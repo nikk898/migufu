@@ -5,6 +5,7 @@ const { autenticar } = require('../middlewares/auth');
 const { limiteRedefinir } = require('../middlewares/limites');
 const v = require('../utils/validacao');
 const { resolverCampus, vincularInteresses, idiomasTexto } = require('../utils/dados');
+const { podeAcessarUsuario } = require('../utils/escopo');
 
 const router = express.Router();
 router.use(autenticar);
@@ -31,7 +32,7 @@ router.get('/', async (req, res) => {
            FROM voluntario vo LEFT JOIN campus c ON c.id = vo.campus_id
           WHERE vo.user_id = $1`, [id])
     : await db.query(
-        `SELECT e.matricula, e.cpf, e.passaporte, e.pais_origem, e.curso, c.nome AS campus,
+        `SELECT e.matricula, e.cpf, e.passaporte, e.pais_origem, e.curso, e.periodo, c.nome AS campus,
                 e.idioma_site, e.sobre_mim AS bio, e.expectativas_do_curso AS expectativas
            FROM estudante_internacional e JOIN campus c ON c.id = e.campus_id
           WHERE e.usuario_id = $1`, [id]);
@@ -45,7 +46,7 @@ router.get('/', async (req, res) => {
 });
 
 // ---------- PUT: alterar informações (campos não enviados ficam como estão) ----------
-// E-mail, CPF, matrícula e perfil NÃO podem ser alterados por aqui.
+// E-mail, CPF/passaporte e perfil NÃO podem ser alterados por aqui (a matrícula pode: o front permite).
 router.put('/', async (req, res) => {
   const b = req.body;
   const id = req.usuario.id;
@@ -61,15 +62,19 @@ router.put('/', async (req, res) => {
   const matricula = b.matricula === undefined ? null : v.texto(b.matricula, 'Matrícula', { max: 50 });
 
   await db.transacao(async (c) => {
-    const campusId = b.campus === undefined ? null : (await resolverCampus(c, b.campus)).id;
+    const campus = b.campus === undefined ? null : await resolverCampus(c, b.campus);
+    const campusId = campus ? campus.id : null;
+    // A instituição do usuário acompanha o campus (o escopo do Admin depende disso).
+    const instituicaoId = campus ? campus.id_instituicao : null;
     const u = await c.query(
       `UPDATE base_user
           SET nome_completo = COALESCE($2, nome_completo),
               telefone = COALESCE($3, telefone),
               genero = COALESCE($4, genero),
+              id_instituicao = COALESCE($5, id_instituicao),
               ultima_atualizacao = now()
         WHERE id = $1 AND ativo RETURNING perfil`,
-      [id, nome, tel, genero]
+      [id, nome, tel, genero, instituicaoId]
     );
     if (!u.rows[0]) throw new v.ErroHttp(404, 'Usuário não encontrado');
 
@@ -90,9 +95,9 @@ router.put('/', async (req, res) => {
                 sobre_mim = COALESCE($4, sobre_mim),
                 expectativas_do_curso = COALESCE($5, expectativas_do_curso),
                 pais_origem = COALESCE($6, pais_origem), matricula = COALESCE($7, matricula),
-                ultima_atualizacao = now()
+                periodo = COALESCE($8, periodo), ultima_atualizacao = now()
           WHERE usuario_id = $1`,
-        [id, curso, campusId, bio, expectativas, pais, matricula]
+        [id, curso, campusId, bio, expectativas, pais, matricula, periodo]
       );
     }
   });
@@ -164,18 +169,12 @@ router.put('/senha', limiteRedefinir, async (req, res) => {
 });
 
 // ---------- PERFIL PÚBLICO: GET /api/perfil/publico/:id ----------
-// Só o próprio dono, admins ou quem tem vínculo ativo (migufu) com a pessoa podem ver.
+// Só o próprio dono, Mestre, Admin da mesma instituição ou quem tem vínculo ativo (migufu).
+// Quando não pode ver, responde 404 (e não 403) para não revelar que o id existe.
 router.get('/publico/:id', async (req, res) => {
   const alvo = v.idPositivo(req.params.id, 'Id');
-  const meuId = Number(req.usuario.id);
-  if (alvo !== meuId && !['Admin', 'Mestre'].includes(req.usuario.perfil)) {
-    const vinc = await db.query(
-      `SELECT 1 FROM vinculo_migufu
-        WHERE ativo AND ((voluntario_id = $1 AND estudante_internacional_id = $2)
-                      OR (voluntario_id = $2 AND estudante_internacional_id = $1))`,
-      [meuId, alvo]
-    );
-    if (!vinc.rowCount) throw new v.ErroHttp(404, 'Perfil não encontrado');
+  if (!(await podeAcessarUsuario(db, req.usuario, alvo))) {
+    throw new v.ErroHttp(404, 'Perfil não encontrado');
   }
 
   const p = await db.query(

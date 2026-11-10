@@ -14,6 +14,8 @@ const ROTULO_NIVEL = {
 const slug = (s) =>
   String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+// "Campus Santa Mônica" e "Santa Mônica" são o mesmo campus.
+const slugCampus = (s) => slug(s).replace(/^campus-/, '');
 
 // c = client da transação (ou o próprio db). Aceita id numérico ou nome/slug do campus.
 async function resolverCampus(c, valor) {
@@ -21,9 +23,9 @@ async function resolverCampus(c, valor) {
     const r = await c.query('SELECT id, id_instituicao FROM campus WHERE id = $1', [v.idPositivo(valor, 'Campus')]);
     if (r.rows[0]) return r.rows[0];
   } else {
-    const alvo = slug(v.texto(valor, 'Campus', { max: 100 }));
+    const alvo = slugCampus(v.texto(valor, 'Campus', { max: 100 }));
     const todos = await c.query('SELECT id, id_instituicao, nome FROM campus');
-    const achado = todos.rows.find((x) => slug(x.nome) === alvo);
+    const achado = todos.rows.find((x) => slugCampus(x.nome) === alvo);
     if (achado) return achado;
   }
   throw new v.ErroHttp(400, 'Campus inválido');

@@ -153,7 +153,7 @@
         if (typeof o.aoSair === "function") {
           o.aoSair();
         } else {
-          // TODO: encerrar a sessão no back-end.
+          localStorage.removeItem("token");
           window.location.href = "login.html";
         }
       });
@@ -176,7 +176,7 @@
       if (typeof o.aoSair === "function") {
         o.aoSair();
       } else {
-        // TODO: encerrar a sessão no back-end e redirecionar para a tela de login
+        localStorage.removeItem("token");
         window.location.href = "login.html";
       }
     });

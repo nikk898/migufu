@@ -227,3 +227,7 @@ ALTER TYPE tipo_idioma ADD VALUE IF NOT EXISTS 'Libras';
 ALTER TABLE mensagem_suporte
   ADD COLUMN IF NOT EXISTS resolvido_em TIMESTAMPTZ,
   ADD COLUMN IF NOT EXISTS resolvido_por INTEGER REFERENCES base_user(id);
+
+-- periodo do estudante internacional (o formulário de cadastro e o perfil já enviam esse campo)
+ALTER TABLE estudante_internacional
+  ADD COLUMN IF NOT EXISTS periodo SMALLINT CHECK (periodo > 0);

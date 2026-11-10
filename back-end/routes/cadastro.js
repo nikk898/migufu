@@ -51,6 +51,7 @@ router.post('/estudante', async (req, res) => {
   const matricula = v.texto(b.matricula, 'Matrícula', { max: 50 });
   const pais = v.texto(b.pais, 'País de origem', { max: 100 });
   const curso = v.texto(b.curso, 'Curso', { max: 100 });
+  const periodoEst = v.periodo(b.periodo);
   const idiomaSite = IDIOMA_SITE.get(b.idioma_site) || 'Portugues';
 
   const id = await db.transacao(async (c) => {
@@ -58,10 +59,10 @@ router.post('/estudante', async (req, res) => {
     const novoId = await criarUsuario(c, d, 'Internacional', campus);
     await c.query(
       `INSERT INTO estudante_internacional
-         (usuario_id, matricula, cpf, passaporte, pais_origem, curso, campus_id,
+         (usuario_id, matricula, cpf, passaporte, pais_origem, curso, periodo, campus_id,
           idioma_site, sobre_mim, expectativas_do_curso)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
-      [novoId, matricula, doc.cpf, doc.passaporte, pais, curso, campus.id, idiomaSite, d.bio, d.expectativas]
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+      [novoId, matricula, doc.cpf, doc.passaporte, pais, curso, periodoEst, campus.id, idiomaSite, d.bio, d.expectativas]
     );
     return novoId;
   });

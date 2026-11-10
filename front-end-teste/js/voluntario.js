@@ -52,7 +52,7 @@
   function linhaInfo(rotulo, valor) {
     var p = criar("p", "texto");
     p.appendChild(criar("strong", "", rotulo + ": "));
-    p.appendChild(document.createTextNode(valor));
+    p.appendChild(document.createTextNode(valor || "Não informado"));
     return p;
   }
 
@@ -94,10 +94,6 @@
     link.href = PerfilPublico.url(m.id, "voluntario");
 
     link.setAttribute("aria-label", "Ver perfil de " + m.nome);
-
-    link.addEventListener("click", function () {
-      PerfilPublico.guardar(m, "estudante");
-    });
 
     link.appendChild(avatar);
     link.appendChild(criar("span", "migufu__nome", m.nome));

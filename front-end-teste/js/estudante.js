@@ -158,10 +158,6 @@
       (verPerfil[idiomaAtual] || verPerfil.pt) + " " + pessoa.nome,
     );
 
-    link.addEventListener("click", () => {
-      PerfilPublico.guardar(pessoa, "voluntario");
-    });
-
     link.append(avatar, criar("span", "migufu__nome", pessoa.nome));
 
     perfil.appendChild(link);

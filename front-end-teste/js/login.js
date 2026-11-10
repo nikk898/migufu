@@ -7,6 +7,14 @@
 
   var form, emailEl, senhaEl, erroEl, modal;
 
+  // perfil do banco -> página inicial
+  var DESTINOS = {
+    Admin: "admin.html",
+    Mestre: "mestre.html",
+    Voluntario: "voluntario.html",
+    Internacional: "estudante.html"
+  };
+
   function mostrarErro(mensagem) {
     erroEl.textContent = mensagem;
     erroEl.hidden = false;
@@ -34,23 +42,19 @@
       return;
     }
 
-    // TODO: trocar por uma chamada ao back-end (POST de login) e usar o perfil
-    // retornado para escolher a página de destino. Por enquanto usa AuthMock.
-    if (typeof AuthMock === "undefined") {
-      mostrarErro("Erro interno: auth-mock.js não carregou.");
-      console.error("auth-mock.js não carregou. Confira o caminho em login.html.");
-      return;
-    }
+    var botao = form.querySelector('[type="submit"]');
+    botao.disabled = true;
 
-    var destino = AuthMock.entrar(email, senha);
-
-    if (!destino) {
-      mostrarErro("E-mail ou senha incorretos.");
-      senhaEl.focus();
-      return;
-    }
-
-    window.location.href = destino;
+    Api.chamar("/usuarios/login", { method: "POST", body: { email: email, senha: senha } })
+      .then(function (r) {
+        localStorage.setItem("token", r.token);
+        window.location.href = DESTINOS[r.usuario.perfil] || "login.html";
+      })
+      .catch(function (e) {
+        mostrarErro(e.message);
+        senhaEl.focus();
+      })
+      .finally(function () { botao.disabled = false; });
   }
 
   function iniciarModal() {

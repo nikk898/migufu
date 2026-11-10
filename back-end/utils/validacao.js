@@ -84,9 +84,14 @@ function idPositivo(valor, campo = 'Id') {
   return n;
 }
 
+// Devolve o número do período (1 a 20) ou null para "Concluído" / "Não se aplica" / vazio.
 function periodo(valor) {
-  const n = Number(String(valor ?? '').replace(/\D/g, ''));
-  if (!Number.isInteger(n) || n < 1 || n > 20) throw new ErroHttp(400, 'Período inválido');
+  if (valor === undefined || valor === null || valor === '') return null;
+  const chave = semAcento(String(valor)).trim().toLowerCase();
+  if (chave === 'concluido' || chave === 'nao-se-aplica' || chave === 'nao se aplica') return null;
+  if (!/^\d{1,2}$/.test(chave)) throw new ErroHttp(400, 'Período inválido');
+  const n = Number(chave);
+  if (n < 1 || n > 20) throw new ErroHttp(400, 'Período inválido');
   return n;
 }
 

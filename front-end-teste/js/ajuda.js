@@ -20,6 +20,7 @@
       placeholder: "Escreva aqui a sua mensagem...",
       enviar: "Enviar mensagem",
       erro: "Escreva uma mensagem antes de enviar.",
+      curta: "Escreva uma mensagem com pelo menos 10 caracteres.",
       sucesso: "Mensagem enviada! Nossa equipe responderá em breve.",
     },
 
@@ -31,6 +32,7 @@
       placeholder: "Write your message here...",
       enviar: "Send message",
       erro: "Please write a message before submitting.",
+      curta: "Please write at least 10 characters.",
       sucesso: "Message sent! Our team will reply soon.",
     },
 
@@ -42,6 +44,7 @@
       placeholder: "Escribe tu mensaje aquí...",
       enviar: "Enviar mensaje",
       erro: "Escribe un mensaje antes de enviarlo.",
+      curta: "Escribe al menos 10 caracteres.",
       sucesso: "¡Mensaje enviado! Nuestro equipo responderá pronto.",
     },
 
@@ -53,6 +56,7 @@
       placeholder: "Écrivez votre message ici...",
       enviar: "Envoyer le message",
       erro: "Veuillez écrire un message avant de l'envoyer.",
+      curta: "Veuillez écrire au moins 10 caractères.",
       sucesso: "Message envoyé ! Notre équipe vous répondra bientôt.",
     },
   };
@@ -138,6 +142,12 @@
 
     if (!mensagem) {
       mostrarErro(traducao().erro);
+      entrada.focus();
+      return;
+    }
+
+    if (mensagem.length < 10) {
+      mostrarErro(traducao().curta);
       entrada.focus();
       return;
     }
