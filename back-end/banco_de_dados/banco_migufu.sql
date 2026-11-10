@@ -231,3 +231,6 @@ ALTER TABLE mensagem_suporte
 -- periodo do estudante internacional (o formulário de cadastro e o perfil já enviam esse campo)
 ALTER TABLE estudante_internacional
   ADD COLUMN IF NOT EXISTS periodo SMALLINT CHECK (periodo > 0);
+
+INSERT INTO instituicao (nome, sigla, cidade, uf)
+VALUES ('Universidade Federal de Uberlândia', 'UFU', 'Uberlândia', 'MG');
