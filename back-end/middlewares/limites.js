@@ -47,4 +47,12 @@ const limiteRedefinir = rateLimit({
   message: { erro: 'Muitas tentativas. Tente novamente em alguns minutos.' },
 });
 
-module.exports = { limiteGeral, limiteLogin, limiteCadastro, limiteEsqueci, limiteRedefinir };
+// Chamados de suporte: evita spam para os admins.
+const limiteSuporte = rateLimit({
+  ...base,
+  windowMs: 60 * 60 * 1000,
+  limit: 10,
+  message: { erro: 'Muitos chamados enviados. Tente novamente mais tarde.' },
+});
+
+module.exports = { limiteGeral, limiteLogin, limiteCadastro, limiteEsqueci, limiteRedefinir, limiteSuporte };
