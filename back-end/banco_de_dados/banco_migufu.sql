@@ -144,8 +144,7 @@ CREATE TABLE estudante_internacional (
     data_chegada DATE,
     termo_aceito BOOLEAN NOT NULL DEFAULT FALSE,
     termo_aceito_em TIMESTAMPTZ,
-   expectativas_do_curso TEXT,
-   observacao TEXT,
+    expectativas_do_curso TEXT,
     observacao TEXT,
     ultima_atualizacao TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
