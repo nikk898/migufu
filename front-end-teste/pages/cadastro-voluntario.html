@@ -71,6 +71,38 @@
               <p class="campo__erro" id="erro-email" role="alert" hidden></p>
             </div>
 
+            <!-- Campo de Senha -->
+              <div class="campo">
+                <label class="campo__rotulo" for="senha">Senha</label>
+                <input
+                  class="campo__entrada"
+                  type="password"
+                  id="senha"
+                  name="senha"
+                  placeholder="digite sua senha..."
+                  autocomplete="new-password"
+                  required
+                  aria-describedby="erro-senha"
+                />
+                <p class="campo__erro" id="erro-senha" role="alert" hidden></p>
+              </div>
+
+              <!-- Campo de Confirmar Senha -->
+              <div class="campo">
+                <label class="campo__rotulo" for="confirmar-senha">Confirmar Senha</label>
+                <input
+                  class="campo__entrada"
+                  type="password"
+                  id="confirmar-senha"
+                  name="confirmar_senha"
+                  placeholder="repita sua senha..."
+                  autocomplete="new-password"
+                  required
+                  aria-describedby="erro-confirmar-senha"
+                />
+                <p class="campo__erro" id="erro-confirmar-senha" role="alert" hidden></p>
+              </div>
+
             <div class="campo">
               <label class="campo__rotulo" for="telefone">Telefone para contato (com DDD)</label>
               <input class="campo__entrada" type="tel" id="telefone" name="telefone" placeholder="(XX) X XXXX-XXXX"
@@ -194,7 +226,6 @@
   </template>
 
   <script src="../js/cadastro-dados.js"></script>
-  <script src="../js/api.js"></script>
   <script src="../js/cadastro.js"></script>
 </body>
 </html>
