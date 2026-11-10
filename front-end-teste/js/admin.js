@@ -5,17 +5,7 @@
 (function () {
   "use strict";
 
-  // Dados de exemplo (iguais aos do protótipo do Figma).
-  // TODO: substituir por uma chamada ao back-end quando a API estiver pronta.
-  var dadosExemplo = {
-    nome: "Administrador",
-    instituicao: "Universidade Federal de Uberlândia (UFU)",
-    estudantesComMigufu: 25,
-    estudantesSemMigufu: 15,
-    voluntariosAptos: 30,
-    certificadosPendentes: 5,
-    mensagensPendentes: 4,
-  };
+  // Preenchido por GET /api/admin/resumo (números da instituição do admin logado).
 
   function campo(nome) {
     return document.querySelector('[data-admin="' + nome + '"]');
@@ -24,6 +14,25 @@
   function texto(nome, valor) {
     var el = campo(nome);
     if (el) el.textContent = valor;
+  }
+
+  // Converte a resposta da API (snake_case) nos nomes usados pela tela.
+  function converter(r) {
+    return {
+      nome: String(r.nome || "").split(" ")[0] || "Administrador",
+      instituicao: r.instituicao,
+      estudantesComMigufu: r.estudantes_com_migufu,
+      estudantesSemMigufu: r.estudantes_sem_migufu,
+      voluntariosAptos: r.voluntarios_aptos,
+      certificadosPendentes: r.certificados_pendentes,
+      mensagensPendentes: r.mensagens_pendentes,
+    };
+  }
+
+  function carregarResumo() {
+    return Api.chamar("/admin/resumo")
+      .then(function (r) { preencherTela(converter(r)); })
+      .catch(function (e) { alert(e.message); });
   }
 
   function preencherTela(dados) {
@@ -47,6 +56,6 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     Navbar.render("#navbar", { itens: Navbar.ITENS_ADMIN, ativo: "inicio" });
-    preencherTela(dadosExemplo);
+    carregarResumo();
   });
 })();

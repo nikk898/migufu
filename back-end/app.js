@@ -39,6 +39,7 @@ app.use('/api/cadastro', require('./routes/cadastro'));
 app.use('/api/painel', require('./routes/painel'));
 app.use('/api/perfil', require('./routes/perfil'));
 app.use('/api/suporte', require('./routes/suporte'));
+app.use('/api/admin', require('./routes/admin'));
 
 // Descomente quando esses arquivos exportarem um router (module.exports = router):
 // app.use('/api/formulario', require('./routes/formulario'));
