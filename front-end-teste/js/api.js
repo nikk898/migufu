@@ -1,65 +1,104 @@
+/* ==========================================================================
+   Api (js/api.js)
+   Fala com o back-end. Carregue este arquivo ANTES dos scripts da página:
+     <script src="../js/api.js"></script>
+     <script src="../js/login.js"></script>
+
+   Uso:
+     Api.chamar("/suporte?status=pendente")                       // GET
+     Api.chamar("/associar/vinculos", { method: "POST", body: {...} })
+     Api.exigirPerfil(["Admin", "Mestre"]).then(function (usuario) { ... });  // páginas protegidas
+     Api.sair();                                                  // botão "Sair"
+   ========================================================================== */
+
 (function (global) {
   "use strict";
 
-  var API = "http://localhost:3000/api"; // em produção, trocar
+  var API = "http://localhost:3000/api";   // em produção, trocar pela URL do back-end
+  var PAGINA_LOGIN = "login.html";
 
-  // Páginas públicas: um 401 aqui é "senha errada", não "sessão expirada".
-  var PUBLICAS = /(login|recuperar-senha|cadastro-estudante|cadastro-voluntario)\.html$/;
+  // perfil do banco -> página inicial (as páginas ficam na mesma pasta de login.html)
+  var DESTINOS = {
+    Admin: "admin.html",
+    Mestre: "mestre.html",
+    Voluntario: "voluntario.html",
+    Internacional: "estudante.html"
+  };
+
+  function token() {
+    try { return localStorage.getItem("token"); } catch (e) { return null; }
+  }
+
+  // Nestas rotas um 401 significa "dados errados", e não "sessão expirada".
+  function ehRotaPublica(caminho) {
+    return /^\/(usuarios\/login|senha\/|cadastro\/)/.test(caminho);
+  }
+
+  // Quando a página está saindo, devolvemos uma promessa que nunca termina
+  // para nenhum .then/.catch rodar e piscar erro na tela.
+  function promessaParada() {
+    return new Promise(function () {});
+  }
+
+  function sair() {
+    try { localStorage.removeItem("token"); } catch (e) {}
+    window.location.href = PAGINA_LOGIN;
+  }
+
+  function destinoDoPerfil(perfil) {
+    return DESTINOS[perfil] || PAGINA_LOGIN;
+  }
 
   function chamar(caminho, opcoes) {
     opcoes = opcoes || {};
     var headers = { "Content-Type": "application/json" };
-    var token = localStorage.getItem("token");
-    if (token) headers.Authorization = "Bearer " + token;
+    var t = token();
+    if (t) headers.Authorization = "Bearer " + t;
 
     return fetch(API + caminho, {
       method: opcoes.method || "GET",
       headers: headers,
       body: opcoes.body !== undefined ? JSON.stringify(opcoes.body) : undefined
-    }).catch(function () {
-      // servidor fora do ar, CORS bloqueado, sem internet...
-      throw new Error("Não foi possível conectar ao servidor. Tente novamente.");
-    }).then(function (res) {
-      return res.json().catch(function () { return {}; }).then(function (dados) {
-        // sem token ou token expirado: volta para o login
-        if (res.status === 401 && !PUBLICAS.test(window.location.pathname)) {
-          localStorage.removeItem("token");
-          window.location.href = "login.html";
-        }
-        if (!res.ok) throw new Error(dados.erro || "Erro na requisição");
-        return dados;
-      });
-    });
-  }
-
-  /* Baixa um arquivo protegido (ex.: certificado). Devolve { blob, nome }
-     ou, se o servidor responder JSON com { url }, devolve { url }. */
-  function baixar(caminho) {
-    var headers = {};
-    var token = localStorage.getItem("token");
-    if (token) headers.Authorization = "Bearer " + token;
-
-    return fetch(API + caminho, { headers: headers }).catch(function () {
-      throw new Error("Não foi possível conectar ao servidor. Tente novamente.");
-    }).then(function (res) {
-      var tipo = res.headers.get("Content-Type") || "";
-      if (!res.ok || tipo.indexOf("application/json") !== -1) {
+    })
+      .catch(function () {
+        throw new Error("Não foi possível conectar ao servidor. Tente novamente.");
+      })
+      .then(function (res) {
         return res.json().catch(function () { return {}; }).then(function (dados) {
-          if (res.status === 401 && !PUBLICAS.test(window.location.pathname)) {
-            localStorage.removeItem("token");
-            window.location.href = "login.html";
+          if (res.status === 401 && t && !ehRotaPublica(caminho)) {
+            sair();                       // token expirou ou conta desativada
+            return promessaParada();
           }
-          if (!res.ok) throw new Error(dados.erro || "Erro ao baixar o arquivo");
-          return { url: dados.url };
+          if (!res.ok) {
+            var erro = new Error(dados.erro || "Erro na requisição");
+            erro.status = res.status;
+            throw erro;
+          }
+          return dados;
         });
-      }
-      var disp = res.headers.get("Content-Disposition") || "";
-      var achou = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disp);
-      return res.blob().then(function (blob) {
-        return { blob: blob, nome: achou ? decodeURIComponent(achou[1]) : "arquivo" };
       });
+  }
+
+  // Chame no começo de cada página protegida. Confere no servidor se o login ainda vale
+  // e se o perfil pode ver a página; senão manda para o login (ou para a página do perfil).
+  function exigirPerfil(perfis) {
+    if (!token()) {
+      sair();
+      return promessaParada();
+    }
+    return chamar("/usuarios/me").then(function (usuario) {
+      if (perfis && perfis.indexOf(usuario.perfil) === -1) {
+        window.location.href = destinoDoPerfil(usuario.perfil);
+        return promessaParada();
+      }
+      return usuario;                     // { id, nome_completo, email, perfil, ... }
     });
   }
 
-  global.Api = { chamar: chamar, baixar: baixar };
+  global.Api = {
+    chamar: chamar,
+    exigirPerfil: exigirPerfil,
+    sair: sair,
+    destinoDoPerfil: destinoDoPerfil
+  };
 })(window);
