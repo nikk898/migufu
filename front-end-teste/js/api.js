@@ -32,5 +32,34 @@
     });
   }
 
-  global.Api = { chamar: chamar };
+  /* Baixa um arquivo protegido (ex.: certificado). Devolve { blob, nome }
+     ou, se o servidor responder JSON com { url }, devolve { url }. */
+  function baixar(caminho) {
+    var headers = {};
+    var token = localStorage.getItem("token");
+    if (token) headers.Authorization = "Bearer " + token;
+
+    return fetch(API + caminho, { headers: headers }).catch(function () {
+      throw new Error("Não foi possível conectar ao servidor. Tente novamente.");
+    }).then(function (res) {
+      var tipo = res.headers.get("Content-Type") || "";
+      if (!res.ok || tipo.indexOf("application/json") !== -1) {
+        return res.json().catch(function () { return {}; }).then(function (dados) {
+          if (res.status === 401 && !PUBLICAS.test(window.location.pathname)) {
+            localStorage.removeItem("token");
+            window.location.href = "login.html";
+          }
+          if (!res.ok) throw new Error(dados.erro || "Erro ao baixar o arquivo");
+          return { url: dados.url };
+        });
+      }
+      var disp = res.headers.get("Content-Disposition") || "";
+      var achou = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disp);
+      return res.blob().then(function (blob) {
+        return { blob: blob, nome: achou ? decodeURIComponent(achou[1]) : "arquivo" };
+      });
+    });
+  }
+
+  global.Api = { chamar: chamar, baixar: baixar };
 })(window);

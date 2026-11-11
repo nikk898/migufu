@@ -1,67 +1,61 @@
 (function () {
   "use strict";
 
-  var POR_PAGINA = 10;
-
-  /* ---- Dados de exemplo (trocar pela API depois) ---- */
-  var NOMES = ["Jean Martin", "João Silva", "Felipe Martins", "Maria Rodriguez", "Ana Souza", "Carlos Lima",
-               "Luiza Prado", "Pedro Alves", "Sofia Moreau", "Rafael Costa", "Camila Torres", "Diego Herrera"];
-  var MENSAGENS = [
-    "Olá! Gostaria de saber como altero meu e-mail de cadastro, pois não tenho mais acesso a ele. Podem ajudar, por favor?",
-    "Estou tendo problemas para enviar o meu certificado de capacitação. O sistema não aceita o arquivo PDF.",
-    "Não estou conseguindo entrar em contato com o meu MIGUFU, o número está desatualizado.",
-    "Olá! Tem alguma informação pendente no meu cadastro para conseguir um MIGUFU?"
-  ];
-  var TEMPOS = ["10m atrás", "2h atrás", "Ontem", "2 dias atrás", "3 dias atrás", "1 semana atrás"];
-
-  function gerar(qtd, status, inicioId) {
-    var lista = [];
-    for (var i = 0; i < qtd; i++) {
-      var nome = NOMES[i % NOMES.length];
-      lista.push({
-        id: inicioId + i,
-        nome: nome,
-        perfil: i % 2 === 0 ? "estudante" : "voluntario",
-        email: nome.toLowerCase().replace(/\s+/g, ".").normalize("NFD").replace(/[\u0300-\u036f]/g, "") + "@ufu.br",
-        telefone: "+55 34 9" + (1000 + i * 7) + "-" + (2000 + i * 13),
-        mensagem: MENSAGENS[i % MENSAGENS.length],
-        tempo: TEMPOS[Math.min(i, TEMPOS.length - 1)],
-        status: status
-      });
-    }
-    return lista;
-  }
-
-  var chamados = gerar(23, "pendente", 1).concat(gerar(14, "resolvido", 100));
+  var POR_PAGINA = 10; // igual ao porPagina da rota GET /api/suporte
 
   /* ---- Estado ---- */
   var principal = document.querySelector("main[data-status]");
   var STATUS = principal.getAttribute("data-status"); // "pendente" | "resolvido"
   var MQ_DESKTOP = window.matchMedia("(min-width: 900px)");
-  var estado = { pagina: 1, busca: "", selecionadoId: null };
+  // itens = página atual (vem da API); total = quantos chamados existem no filtro
+  var estado = { pagina: 1, busca: "", selecionadoId: null, itens: [], total: 0 };
+  var timerBusca = null;
+  var requisicaoAtual = 0;
 
-  function filtrados() {
-    var termo = estado.busca.toLowerCase();
-    return chamados.filter(function (c) {
-      if (c.status !== STATUS) return false;
-      if (!termo) return true;
-      return c.nome.toLowerCase().indexOf(termo) !== -1 ||
-             c.email.toLowerCase().indexOf(termo) !== -1;
-    });
+  /* O mock trazia "tempo" pronto; agora calculamos a partir de criado_em */
+  function tempoRelativo(iso) {
+    var min = Math.floor((Date.now() - new Date(iso).getTime()) / 60000);
+    if (min < 60) return min < 1 ? "agora" : min + "m atrás";
+    var h = Math.floor(min / 60);
+    if (h < 24) return h + "h atrás";
+    var d = Math.floor(h / 24);
+    if (d === 1) return "Ontem";
+    if (d < 7) return d + " dias atrás";
+    var s = Math.floor(d / 7);
+    if (s < 5) return s === 1 ? "1 semana atrás" : s + " semanas atrás";
+    return new Date(iso).toLocaleDateString("pt-BR");
+  }
+
+  /* GET /api/suporte?status=&pagina=&busca= */
+  function carregar() {
+    var numero = ++requisicaoAtual; // ignora respostas antigas (ex.: digitação rápida na busca)
+    var q = "?status=" + STATUS + "&pagina=" + estado.pagina +
+            "&busca=" + encodeURIComponent(estado.busca);
+
+    return Api.chamar("/suporte" + q).then(function (r) {
+      if (numero !== requisicaoAtual) return;
+      // a página ficou vazia (ex.: resolveu o último item dela): volta uma
+      if (!r.itens.length && estado.pagina > 1) {
+        estado.pagina -= 1;
+        return carregar();
+      }
+      estado.total = r.total;
+      estado.itens = r.itens.map(function (c) {
+        c.tempo = tempoRelativo(c.criado_em);
+        c.status = STATUS; // o card de detalhe usa para mostrar o botão "resolver"
+        return c;
+      });
+      renderTudo();
+    }).catch(function (e) { alert(e.message); });
   }
 
   function porId(id) {
-    return chamados.filter(function (c) { return c.id === id; })[0] || null;
+    return estado.itens.filter(function (c) { return c.id === id; })[0] || null;
   }
 
   function renderTudo() {
     var raiz = document.getElementById("suporte");
-    var lista = filtrados();
-    var totalPaginas = Math.max(1, Math.ceil(lista.length / POR_PAGINA));
-    if (estado.pagina > totalPaginas) estado.pagina = totalPaginas;
-
-    var inicio = (estado.pagina - 1) * POR_PAGINA;
-    var itens = lista.slice(inicio, inicio + POR_PAGINA);
+    var itens = estado.itens;
 
     if (MQ_DESKTOP.matches) {
       var visivel = itens.some(function (c) { return c.id === estado.selecionadoId; });
@@ -81,13 +75,13 @@
     });
 
     Paginacao.render("#paginacao", {
-      total: lista.length,
+      total: estado.total,
       porPagina: POR_PAGINA,
       paginaAtual: estado.pagina,
       aoMudar: function (p) {
         estado.pagina = p;
         estado.selecionadoId = null;
-        renderTudo();
+        carregar();
         window.scrollTo({ top: 0 });
       }
     });
@@ -101,6 +95,7 @@
     });
   }
 
+  /* POST /api/suporte/:id/resolver (pendente -> resolvido) */
   function resolver(c) {
     Modal.confirmar({
       titulo: "Marcar como resolvido",
@@ -108,9 +103,13 @@
       textoConfirmar: "SIM, RESOLVER",
       perigo: false,
       aoConfirmar: function () {
-        c.status = "resolvido";
-        estado.selecionadoId = null;
-        renderTudo();
+        // só atualiza a tela depois que a API confirmar
+        Api.chamar("/suporte/" + c.id + "/resolver", { method: "POST", body: {} })
+          .then(function () {
+            estado.selecionadoId = null;
+            return carregar();
+          })
+          .catch(function (e) { alert(e.message); });
       }
     });
   }
@@ -123,17 +122,22 @@
     });
     CabecalhoPagina.render("#cabecalho", { titulo: "Ajuda e Suporte" });
 
+    // Espera a pessoa parar de digitar (300 ms) para não chamar a API a cada letra
     document.getElementById("busca-chamado").addEventListener("input", function (e) {
-      estado.busca = e.target.value.trim();
-      estado.pagina = 1;
-      estado.selecionadoId = null;
-      renderTudo();
+      var valor = e.target.value.trim();
+      clearTimeout(timerBusca);
+      timerBusca = setTimeout(function () {
+        estado.busca = valor;
+        estado.pagina = 1;
+        estado.selecionadoId = null;
+        carregar();
+      }, 300);
     });
 
     var aoMudarTela = function () { renderTudo(); };
     if (MQ_DESKTOP.addEventListener) MQ_DESKTOP.addEventListener("change", aoMudarTela);
     else MQ_DESKTOP.addListener(aoMudarTela);
 
-    renderTudo();
+    carregar();
   });
 })();

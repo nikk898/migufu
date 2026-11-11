@@ -71,4 +71,44 @@ function enviarAvisoSenhaAlterada({ para }) {
   });
 }
 
-module.exports = { enviarEmail, enviarRecuperacaoSenha, enviarAvisoSenhaAlterada };
+// Admin vinculou o voluntário a um estudante internacional (admin-associar.html).
+// "link" leva ao site; depois do login o voluntário vê o contato do estudante no painel.
+function enviarAvisoVinculo({ para, estudante, link }) {
+  const nome = escaparHtml(para.nome || '');
+  const est = escaparHtml(estudante);
+  const url = escaparHtml(link);
+  return enviarEmail({
+    para,
+    assunto: 'Você agora é MIGUFU de um estudante internacional!',
+    html: `<p>Olá${nome ? `, ${nome}` : ''}!</p>
+<p>Você foi vinculado(a) como MIGUFU de <strong>${est}</strong>, estudante internacional.</p>
+<p>Entre no site para ver os dados de contato e conhecer melhor o seu Migufu:</p>
+<p><a href="${url}">Acessar o Migufu</a></p>
+<p>Obrigado por fazer parte do programa!</p>`,
+    texto: `Olá${para.nome ? `, ${para.nome}` : ''}!\n\n`
+      + `Você foi vinculado(a) como MIGUFU de ${estudante}, estudante internacional.\n\n`
+      + `Entre no site para ver os dados de contato e conhecer melhor o seu Migufu:\n${link}\n\n`
+      + `Obrigado por fazer parte do programa!`
+  });
+}
+
+// Admin desfez o vínculo (admin-associar.html).
+function enviarAvisoDesvinculo({ para, estudante }) {
+  const nome = escaparHtml(para.nome || '');
+  const est = escaparHtml(estudante);
+  return enviarEmail({
+    para,
+    assunto: 'Seu vínculo no MIGUFU foi encerrado',
+    html: `<p>Olá${nome ? `, ${nome}` : ''}!</p>
+<p>O seu vínculo como MIGUFU de <strong>${est}</strong> foi encerrado pela administração do programa.</p>
+<p>Se tiver alguma dúvida, entre em contato pela área de Ajuda do site.</p>`,
+    texto: `Olá${para.nome ? `, ${para.nome}` : ''}!\n\n`
+      + `O seu vínculo como MIGUFU de ${estudante} foi encerrado pela administração do programa.\n\n`
+      + `Se tiver alguma dúvida, entre em contato pela área de Ajuda do site.`
+  });
+}
+
+module.exports = {
+  enviarEmail, enviarRecuperacaoSenha, enviarAvisoSenhaAlterada,
+  enviarAvisoVinculo, enviarAvisoDesvinculo
+};

@@ -2,68 +2,39 @@
   "use strict";
 
   /* ------------------------------------------------------------------
-     Dados de exemplo (trocar pela API depois).
+     Dados vindos da API (routes/associar.js no back-end).
      Idiomas e interesses são ESTRUTURADOS para o filtro de preferências funcionar:
        idiomas: { idDoIdioma: "nivel" }   (ex.: { frances: "nativo" })
        interesses: ["Parques", ...]
-     "filtros" = filtro de preferências do estudante (formato do FiltroPreferencias).
+     "filtros" = filtro de preferências do estudante (só na tela, não é salvo).
+     Cada item de estudanteAtual.vinculos tem vinculo_id (para encerrar o vínculo certo).
      ------------------------------------------------------------------ */
-  var estudantesMock = [
-    {
-      id: 1,
-      nome: "Jean Martin",
-      curso: "Sistemas de Informação",
-      genero: "Masculino",
-      idiomas: { frances: "nativo", ingles: "intermediario" },
-      interesses: ["Jogos de tabuleiro", "Música", "Parques", "Animes"],
-      vinculos: [
-        { id: 101, nome: "Felipe Martins", curso: "Não se aplica" },
-        { id: 102, nome: "João Silva", curso: "Sistemas de Informação" }
-      ],
-      filtros: {
-        cursos: ["Sistemas de Informação"],
-        interesses: ["Parques"],
-        generos: [],
-        idiomas: { frances: "basico", ingles: "intermediario" }
-      }
-    },
-    {
-      id: 2,
-      nome: "Maria Rodriguez",
-      curso: "Ciências Contábeis",
-      genero: "Feminino",
-      idiomas: { espanhol: "nativo", portugues: "basico" },
-      interesses: ["Culinária", "Viagens", "Esportes"],
-      vinculos: [],
-      filtros: {
-        cursos: ["Ciências Contábeis"],
-        interesses: ["Viagens"],
-        generos: [],
-        idiomas: { espanhol: "qualquer" }
-      }
-    }
-  ];
+  var estudanteAtual = null; // GET /associar/estudantes/:id
+  var voluntarios = [];      // GET /associar/voluntarios
+  var termoBusca = "";
+  var enviando = false;      // evita clique duplo enquanto a API responde
 
-  var voluntariosMock = [
-    { id: 101, nome: "Felipe Martins", curso: "Não se aplica", genero: "Masculino",
-      idiomas: { portugues: "nativo", ingles: "intermediario" }, interesses: ["Esportes", "Tecnologia", "Parques"] },
-    { id: 102, nome: "João Silva", curso: "Sistemas de Informação", genero: "Masculino",
-      idiomas: { portugues: "nativo", ingles: "intermediario" }, interesses: ["Jogos de tabuleiro", "Esportes", "Parques"] },
-    { id: 103, nome: "Ana Souza", curso: "Ciências Contábeis", genero: "Feminino",
-      idiomas: { portugues: "nativo", espanhol: "avancado", frances: "basico" }, interesses: ["Viagens", "Culinária", "Música"] },
-    { id: 104, nome: "Carlos Lima", curso: "Relações Internacionais", genero: "Masculino",
-      idiomas: { portugues: "nativo", frances: "intermediario", ingles: "avancado" }, interesses: ["Cinema", "Viagens", "Leitura"] }
-  ];
-
-  // Recupera o ID do estudante da URL (ex: admin-associar.html?id=1)
-  function obterEstudanteAtual() {
-    var params = new URLSearchParams(window.location.search);
-    var idParam = parseInt(params.get("id"), 10) || 1; // Padrão ID 1 para teste
-    return estudantesMock.find(function (e) { return e.id === idParam; }) || estudantesMock[0];
+  function erro(e) {
+    enviando = false;
+    alert(e.message);
   }
 
-  var estudanteAtual = obterEstudanteAtual();
-  var termoBusca = "";
+  /* O vínculo já foi gravado; se o e-mail falhou, só avisa o admin */
+  function avisarEmail(resposta, acao) {
+    if (resposta && resposta.email_enviado === false) {
+      alert("Voluntário " + acao + ", mas não foi possível enviar o e-mail de aviso. " +
+            "Avise o voluntário por outro meio.");
+    }
+  }
+
+  /* Voluntários já vinculados que não estão mais "aptos e disponíveis" não vêm em
+     GET /voluntarios; entram na lista para que o admin ainda consiga desvinculá-los. */
+  function juntarVinculados() {
+    estudanteAtual.vinculos.forEach(function (vinc) {
+      var existe = voluntarios.some(function (v) { return v.id === vinc.id; });
+      if (!existe) voluntarios.push(vinc);
+    });
+  }
 
   /* ---- Utilitários ---- */
   function obterIniciais(nome) {
@@ -113,7 +84,6 @@
       textoConfirmar: "DESVINCULAR",
       perigo: true,
       aoConfirmar: function () {
-        estudante.vinculos = estudante.vinculos.filter(function (v) { return v.id !== voluntario.id; });
         if (aoConfirmarSucesso) aoConfirmarSucesso();
       }
     });
@@ -121,6 +91,8 @@
 
   /* ---- Renderização ---- */
   function renderizar() {
+    if (!estudanteAtual) return; // dados ainda não chegaram da API
+
     var containerPainel = document.getElementById("painel-selecao-estudante");
     var listaContainer = document.getElementById("lista-voluntarios-associar");
 
@@ -161,7 +133,7 @@
     });
 
     // Voluntários que combinam com a busca e com os filtros
-    var filtradosVol = voluntariosMock.filter(function (v) {
+    var filtradosVol = voluntarios.filter(function (v) {
       if (termoBusca) {
         var b = termoBusca.toLowerCase();
         if (v.nome.toLowerCase().indexOf(b) === -1 && v.curso.toLowerCase().indexOf(b) === -1) return false;
@@ -186,6 +158,7 @@
 
           '<div class="card-assoc-est__corpo">' +
             '<p class="card-assoc-est__linha"><strong>Curso:</strong> ' + escaping(vol.curso) + '</p>' +
+            '<p class="card-assoc-est__linha"><strong>Gênero:</strong> ' + escaping(vol.genero || "Não informado") + '</p>' +
             '<p class="card-assoc-est__linha"><strong>Idiomas:</strong> ' + escaping(textoIdiomas(vol.idiomas)) + '</p>' +
             '<p class="card-assoc-est__linha"><strong>Tags:</strong> ' + escaping(textoTags(vol.interesses)) + '</p>' +
           '</div>' +
@@ -202,16 +175,41 @@
     listaContainer.querySelectorAll("button[data-vol-id]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         var id = parseInt(btn.getAttribute("data-vol-id"), 10);
-        var vol = voluntariosMock.find(function (item) { return item.id === id; });
+        var vol = voluntarios.find(function (item) { return item.id === id; });
         if (!vol) return;
 
-        var jaVinculado = estudanteAtual.vinculos.some(function (v) { return v.id === vol.id; });
-        if (jaVinculado) {
-          confirmarDesvinculacao(estudanteAtual, vol, function () { renderizar(); });
+        var vinculo = estudanteAtual.vinculos.filter(function (v) { return v.id === vol.id; })[0];
+        if (vinculo) {
+          confirmarDesvinculacao(estudanteAtual, vol, function () {
+            if (enviando) return;
+            enviando = true;
+            // POST /associar/vinculos/:id/desvincular (só muda a tela depois que a API confirmar)
+            Api.chamar("/associar/vinculos/" + vinculo.vinculo_id + "/desvincular", { method: "POST", body: {} })
+              .then(function (r) {
+                enviando = false;
+                avisarEmail(r, "desvinculado");
+                estudanteAtual.vinculos = estudanteAtual.vinculos.filter(function (x) {
+                  return x.vinculo_id !== vinculo.vinculo_id;
+                });
+                renderizar();
+              }).catch(erro);
+          });
         } else {
           confirmarVinculacao(estudanteAtual, vol, function () {
-            estudanteAtual.vinculos.push({ id: vol.id, nome: vol.nome, curso: vol.curso });
-            renderizar();
+            if (enviando) return;
+            enviando = true;
+            // POST /associar/vinculos
+            Api.chamar("/associar/vinculos", {
+              method: "POST",
+              body: { voluntario_id: vol.id, estudante_id: estudanteAtual.id }
+            }).then(function (r) {
+              enviando = false;
+              avisarEmail(r, "vinculado");
+              estudanteAtual.vinculos.push({
+                vinculo_id: r.vinculo_id, id: vol.id, nome: vol.nome, curso: vol.curso
+              });
+              renderizar();
+            }).catch(erro);
           });
         }
       });
@@ -234,6 +232,22 @@
       });
     }
 
-    renderizar();
+    // Estudante vem da URL: admin-associar.html?id=1
+    var id = parseInt(new URLSearchParams(window.location.search).get("id"), 10);
+    if (!(id > 0)) {
+      window.location.href = "admin-associacao.html";
+      return;
+    }
+
+    Promise.all([
+      Api.chamar("/associar/estudantes/" + id),
+      Api.chamar("/associar/voluntarios")
+    ]).then(function (r) {
+      estudanteAtual = r[0];
+      estudanteAtual.filtros = FiltroPreferencias.vazio(); // filtros ficam só na tela
+      voluntarios = r[1];
+      juntarVinculados();
+      renderizar(); // só depois que os dados chegarem
+    }).catch(erro);
   });
 })();

@@ -43,7 +43,7 @@
 
         /* Ações*/
         '<div class="card-val__acoes" style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">' +
-          '<a href="' + escaping(v.urlArq || "#") + '" target="_blank" rel="noopener" class="botao botao--secundario" style="height: 38px; font-size: 12px; font-weight: 700; border-radius: 8px; text-decoration: none;">' +
+          '<a href="' + escaping(v.urlArq || "#") + '" target="_blank" rel="noopener" class="botao botao--secundario" data-acao="visualizar" style="height: 38px; font-size: 12px; font-weight: 700; border-radius: 8px; text-decoration: none;">' +
             'VISUALIZAR ARQUIVO' +
           '</a>' +
           '<div style="display: flex; gap: 8px;">' +
@@ -80,6 +80,15 @@
     if (!li) return;
     var btnAprovar = li.querySelector('[data-acao="aprovar"]');
     var btnReprovar = li.querySelector('[data-acao="reprovar"]');
+    var linkArquivo = li.querySelector('[data-acao="visualizar"]');
+
+    // Arquivo protegido por login: a página busca com o token em vez de abrir o link direto
+    if (linkArquivo && typeof item.aoVisualizar === "function") {
+      linkArquivo.addEventListener("click", function (e) {
+        e.preventDefault();
+        item.aoVisualizar(item);
+      });
+    }
 
     if (btnAprovar && typeof item.aoAprovar === "function") {
       btnAprovar.addEventListener("click", function () { item.aoAprovar(item); });

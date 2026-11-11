@@ -20,7 +20,8 @@ const app = express();
 
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : true
+  origin: process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',') : true,
+  exposedHeaders: ['Content-Disposition'] // o front lê o nome do arquivo baixado (certificado)
 }));
 app.use(express.json({ limit: '100kb' }));
 
@@ -40,10 +41,10 @@ app.use('/api/painel', require('./routes/painel'));
 app.use('/api/perfil', require('./routes/perfil'));
 app.use('/api/suporte', require('./routes/suporte'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/associar', require('./routes/associar'));
 
-// Descomente quando esses arquivos exportarem um router (module.exports = router):
+// Descomente quando este arquivo exportar um router (module.exports = router):
 // app.use('/api/formulario', require('./routes/formulario'));
-// app.use('/api/associar', require('./routes/associar'));
 
 // Sempre por último: rota não encontrada e tratador central de erros.
 app.use(naoEncontrado);

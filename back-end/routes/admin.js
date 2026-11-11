@@ -1,7 +1,32 @@
+const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const db = require('../db');
 const { autenticar, autorizar } = require('../middlewares/auth');
 const { escopoPorPerfil } = require('../utils/escopo');
+const { semAcentoSql, padraoBusca } = require('../utils/busca');
+
+/*
+ * Rotas do Admin (todas exigem perfil Admin e só enxergam a instituição dele):
+ *   GET /api/admin/resumo                          admin.html
+ *   GET /api/admin/validacao?busca=                admin-validacao.html (certificados pendentes)
+ *   GET /api/admin/validacao/:id/certificado       baixa o arquivo enviado pelo voluntário
+ *   PUT /api/admin/validacao/:id                   body: { decisao: 'aprovar' | 'reprovar' }
+ */
+
+// Onde ficam os certificados quando certificado_url guarda só o nome do arquivo.
+// (Se guardar um link http/https, a rota de download devolve o link.)
+const PASTA_CERTIFICADOS = path.join(__dirname, '..', 'uploads', 'certificados');
+
+function idValido(valor) {
+  const id = Number(valor);
+  return Number.isInteger(id) && id > 0 ? id : null;
+}
+
+const formatarCpf = (c) => (c && /^\d{11}$/.test(c)
+  ? c.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') : c);
+const nomeArquivo = (url) => (url ? decodeURIComponent(String(url).split(/[\\/]/).pop().split('?')[0]) : null);
+const ehLink = (url) => /^https?:\/\//i.test(String(url || ''));
 
 const router = express.Router();
 
@@ -81,6 +106,90 @@ router.get('/resumo', async (req, res) => {
     certificados_pendentes: c.certificados_pendentes,
     mensagens_pendentes: mensagens.rows[0].n,
   });
+});
+
+// ======================================================================
+// VALIDAÇÃO DE CERTIFICADOS (admin-validacao.html)
+// ======================================================================
+
+// GET /api/admin/validacao?busca=ana
+// Voluntários que enviaram o certificado e aguardam análise (status Pendente).
+// A busca procura no nome, no e-mail e no CPF (com ou sem pontuação).
+router.get('/validacao', async (req, res) => {
+  const busca = typeof req.query.busca === 'string' ? req.query.busca.trim().slice(0, 100) : '';
+  const digitos = busca.replace(/\D/g, '');
+
+  const params = [];
+  const escopo = escopoPorPerfil(req.usuario, 'u', params);
+  params.push(padraoBusca(busca));
+  const pTexto = `$${params.length}`;
+  // Sem dígitos na busca, o CPF não entra (senão '%%' casaria com todo mundo)
+  params.push(digitos ? '%' + digitos + '%' : null);
+  const pCpf = `$${params.length}`;
+
+  const { rows } = await db.query(
+    `SELECT u.id, u.nome_completo AS nome, u.email, vo.cpf,
+            COALESCE(vo.curso, 'Não se aplica') AS curso,
+            vo.certificado_url, vo.data_envio_certificado
+       FROM base_user u JOIN voluntario vo ON vo.user_id = u.id
+      WHERE u.ativo AND u.perfil = 'Voluntario'
+        AND vo.status_aptidao = 'Pendente' AND vo.certificado_url IS NOT NULL
+        AND ${escopo}
+        AND (${semAcentoSql('u.nome_completo')} LIKE ${pTexto} OR lower(u.email) LIKE ${pTexto}
+             OR (${pCpf}::text IS NOT NULL AND vo.cpf LIKE ${pCpf}::text))
+      ORDER BY vo.data_envio_certificado NULLS LAST, u.nome_completo`, params);
+
+  res.json(rows.map((r) => ({
+    id: r.id,
+    nome: r.nome,
+    email: r.email,
+    cpf: formatarCpf(r.cpf),
+    curso: r.curso,
+    nome_arquivo: nomeArquivo(r.certificado_url),
+    data_envio: r.data_envio_certificado,
+  })));
+});
+
+// GET /api/admin/validacao/:id/certificado
+// Link (http/https) guardado no banco -> { url }. Nome de arquivo -> o próprio PDF.
+router.get('/validacao/:id/certificado', async (req, res) => {
+  const id = idValido(req.params.id);
+  if (!id) return res.status(400).json({ erro: 'Id inválido' });
+
+  const params = [id];
+  const escopo = escopoPorPerfil(req.usuario, 'u', params);
+  const { rows } = await db.query(
+    `SELECT vo.certificado_url FROM base_user u JOIN voluntario vo ON vo.user_id = u.id
+      WHERE u.id = $1 AND ${escopo}`, params);
+  const url = rows[0] && rows[0].certificado_url;
+  if (!url) return res.status(404).json({ erro: 'Certificado não encontrado' });
+
+  if (ehLink(url)) return res.json({ url });
+
+  // path.basename impede sair da pasta (ex.: "../../.env")
+  const arquivo = path.join(PASTA_CERTIFICADOS, path.basename(url));
+  if (!fs.existsSync(arquivo)) return res.status(404).json({ erro: 'Arquivo do certificado não encontrado' });
+  res.download(arquivo, path.basename(url));
+});
+
+// PUT /api/admin/validacao/:id   body: { decisao: 'aprovar' | 'reprovar' }
+// aprovar -> status_aptidao 'Apto'; reprovar -> 'Nao Apto' (o voluntário pode reenviar).
+router.put('/validacao/:id', async (req, res) => {
+  const id = idValido(req.params.id);
+  if (!id) return res.status(400).json({ erro: 'Id inválido' });
+  const status = { aprovar: 'Apto', reprovar: 'Nao Apto' }[req.body.decisao];
+  if (!status) return res.status(400).json({ erro: "Informe decisao: 'aprovar' ou 'reprovar'" });
+
+  const params = [id, status];
+  const escopo = escopoPorPerfil(req.usuario, 'u', params);
+  const { rowCount } = await db.query(
+    `UPDATE voluntario vo SET status_aptidao = $2, ultima_atualizacao = NOW()
+       FROM base_user u
+      WHERE vo.user_id = $1 AND u.id = vo.user_id AND ${escopo}
+        AND vo.status_aptidao = 'Pendente' AND vo.certificado_url IS NOT NULL`, params);
+  if (rowCount === 0) return res.status(404).json({ erro: 'Certificado pendente não encontrado' });
+
+  res.json({ mensagem: status === 'Apto' ? 'Voluntário marcado como apto' : 'Certificado reprovado' });
 });
 
 module.exports = router;

@@ -3,6 +3,7 @@ const pool = require('../database');
 const { autenticar, autorizar } = require('../middlewares/auth');
 const { limiteSuporte } = require('../middlewares/limites');
 const v = require('../utils/validacao');
+const { semAcentoSql, padraoBusca } = require('../utils/busca');
 
 const router = express.Router();
 
@@ -26,14 +27,14 @@ router.use(autenticar, autorizar('Admin', 'Mestre'));
 // GET /api/suporte?status=pendente&busca=ana&pagina=1
 router.get('/', async (req, res) => {
   const resolvido = req.query.status === 'resolvido';
-  const busca = typeof req.query.busca === 'string' ? req.query.busca.trim() : '';
+  const busca = typeof req.query.busca === 'string' ? req.query.busca : '';
   const pagina = Math.max(1, parseInt(req.query.pagina, 10) || 1);
   const porPagina = 10;
 
   // o trecho entre ${} é fixo (não vem do usuário); a busca vai por parâmetro ($1)
   const where = `m.resolvido_em IS ${resolvido ? 'NOT NULL' : 'NULL'}
-    AND (u.nome_completo ILIKE $1 OR u.email ILIKE $1)`;
-  const termo = '%' + busca + '%';
+    AND (${semAcentoSql('u.nome_completo')} LIKE $1 OR lower(u.email) LIKE $1)`;
+  const termo = padraoBusca(busca); // sem acento: "joao" acha "João"
 
   const total = await pool.query(
     `SELECT COUNT(*)::int AS n FROM mensagem_suporte m
@@ -51,8 +52,8 @@ router.get('/', async (req, res) => {
   res.json({ total: total.rows[0].n, itens: rows });
 });
 
-// PATCH /api/suporte/:id/resolver
-router.patch('/:id/resolver', async (req, res) => {
+// POST /api/suporte/:id/resolver  (pendente -> resolvido)
+router.post('/:id/resolver', async (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ erro: 'Id inválido' });
 
