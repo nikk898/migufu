@@ -108,7 +108,29 @@ function enviarAvisoDesvinculo({ para, estudante }) {
   });
 }
 
+
+// Admin solicitou que o voluntário envie novamente o certificado.
+function enviarAvisoNovoCertificado({ para }) {
+  const nome = escaparHtml(para.nome || '');
+  return enviarEmail({
+    para,
+    assunto: 'Envie novamente seu certificado - MIGUFU',
+    html: `<p>Olá${nome ? `, ${nome}` : ''}!</p>
+<p>A equipe do MIGUFU solicitou o reenvio do seu certificado.</p>
+<p>Por favor, acesse sua conta no MIGUFU e envie novamente o certificado pela área do seu perfil.</p>
+<p>Após o envio, a equipe responsável poderá realizar uma nova análise do documento.</p>
+<p>Se você já realizou um novo envio, desconsidere esta mensagem.</p>
+<p>Atenciosamente,<br>Equipe MIGUFU</p>`,
+    texto: `Olá${para.nome ? `, ${para.nome}` : ''}!\n\n`
+      + 'A equipe do MIGUFU solicitou o reenvio do seu certificado.\n\n'
+      + 'Por favor, acesse sua conta no MIGUFU e envie novamente o certificado pela área do seu perfil.\n\n'
+      + 'Após o envio, a equipe responsável poderá realizar uma nova análise do documento.\n\n'
+      + 'Se você já realizou um novo envio, desconsidere esta mensagem.\n\n'
+      + 'Atenciosamente,\nEquipe MIGUFU'
+  });
+}
+
 module.exports = {
   enviarEmail, enviarRecuperacaoSenha, enviarAvisoSenhaAlterada,
-  enviarAvisoVinculo, enviarAvisoDesvinculo
+  enviarAvisoVinculo, enviarAvisoDesvinculo, enviarAvisoNovoCertificado
 };

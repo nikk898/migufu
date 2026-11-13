@@ -40,6 +40,7 @@ app.use('/api/cadastro', require('./routes/cadastro'));
 app.use('/api/painel', require('./routes/painel'));
 app.use('/api/perfil', require('./routes/perfil'));
 app.use('/api/suporte', require('./routes/suporte'));
+app.use('/api/admin/usuarios', require('./routes/usuarios-admin'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/associar', require('./routes/associar'));
 

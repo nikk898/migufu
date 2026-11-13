@@ -2,64 +2,52 @@
   "use strict";
 
   var POR_PAGINA = 10;
-  var URL_DETALHE = "admin-usuario.html?id="; // página de detalhe do usuário (recebe o id)
+  var URL_DETALHE = "admin-usuario.html?id=";
+  var usuarios = [];
 
-  /* ---- Dados de exemplo (trocar pela API depois) ---- */
-  var PRIMEIROS = ["João", "Maria", "Felipe", "Ana", "Carlos", "Luiza", "Pedro", "Sofia", "Rafael", "Camila", "Diego", "Beatriz"];
-  var SOBRENOMES = ["Silva", "Martins", "Souza", "Lima", "Prado", "Alves", "Costa", "Torres", "Moreau", "Herrera"];
-
-  function gerar(qtd, tipo, inicioId, statusLista) {
-    var O = FiltroPreferencias.OPCOES;
-    var idsIdioma = ["frances", "ingles", "espanhol", "alemao", "italiano"];
-    var niveis = O.niveis.filter(function (n) { return n.id !== "qualquer"; }); // usuário sempre tem um nível real
-    var lista = [];
-
-    for (var i = 0; i < qtd; i++) {
-      var nome = PRIMEIROS[i % PRIMEIROS.length] + " " + SOBRENOMES[(i * 3) % SOBRENOMES.length];
-      var idiomas = {};
-      idiomas[idsIdioma[i % 5]] = niveis[i % 4].id;
-      if (i % 2 === 0) idiomas[idsIdioma[(i + 1) % 5]] = niveis[(i + 2) % 4].id;
-
-      var cpf = String(10000000000 + i * 7919).slice(0, 11);
-      lista.push({
-        id: inicioId + i,
-        tipo: tipo,
-        nome: nome,
-        email: nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ".") + i + "@ufu.br",
-        cpf: cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4"),
-        curso: i % 4 === 3 ? "Não se aplica" : O.cursos[(i * 7) % O.cursos.length],
-        genero: O.generos[i % 3],
-        interesses: [O.interesses[i % 10], O.interesses[(i + 3) % 10], O.interesses[(i + 6) % 10]],
-        idiomas: idiomas,
-        status: statusLista[i % statusLista.length]
-      });
-    }
-    return lista;
-  }
-
-  var usuarios = gerar(27, "voluntario", 1, ["apto", "nao_apto", "vinculado"])
-    .concat(gerar(14, "estudante", 100, ["vinculado", "sem_vinculo"]));
-
-  /* ---- Estado ---- */
   var principal = document.querySelector("main[data-tipo]");
-  var TIPO = principal.getAttribute("data-tipo"); // "voluntario" | "estudante"
-  var estado = { pagina: 1, busca: "", status: "todos", filtros: FiltroPreferencias.vazio() };
+  if (!principal) return;
 
-  /* Opções do filtro de situação, separado por tipo de usuário.
-     Os ids precisam ser iguais ao campo "status" do usuário. */
+  var TIPO = principal.getAttribute("data-tipo");
+  var estado = {
+    pagina: 1,
+    busca: "",
+    status: "todos",
+    filtros: FiltroPreferencias.vazio()
+  };
+
   var OPCOES_STATUS = {
     voluntario: [
-      { id: "todos",     rotulo: "Todos" },
-      { id: "apto",      rotulo: "Aptos" },
-      { id: "nao_apto",  rotulo: "Não aptos" },
-      { id: "vinculado", rotulo: "Vinculados" }
+      { id: "todos", rotulo: "Todos" },
+      { id: "apto", rotulo: "Aptos" },
+      { id: "nao_apto", rotulo: "Não aptos" },
+      { id: "vinculado", rotulo: "Vinculados" },
+      { id: "pendente", rotulo: "Certificado pendente" }
     ],
     estudante: [
-      { id: "todos",       rotulo: "Todos" },
-      { id: "vinculado",   rotulo: "Com vínculo" },
+      { id: "todos", rotulo: "Todos" },
+      { id: "vinculado", rotulo: "Com vínculo" },
       { id: "sem_vinculo", rotulo: "Sem vínculo" }
     ]
   };
+
+  function erro(e) {
+    alert((e && e.message) || "Não foi possível concluir a operação.");
+  }
+
+  function carregar() {
+    var q = "?tipo=" + encodeURIComponent(TIPO);
+    if (estado.status !== "todos") {
+      q += "&status=" + encodeURIComponent(estado.status);
+    }
+
+    return Api.chamar("/admin/usuarios" + q)
+      .then(function (lista) {
+        usuarios = Array.isArray(lista) ? lista : [];
+        renderTudo();
+      })
+      .catch(erro);
+  }
 
   function filtrados() {
     var termo = estado.busca.toLowerCase();
@@ -68,12 +56,17 @@
     return usuarios.filter(function (u) {
       if (u.tipo !== TIPO) return false;
       if (estado.status !== "todos" && u.status !== estado.status) return false;
+
       if (termo) {
-        var achou = u.nome.toLowerCase().indexOf(termo) !== -1 ||
-                    u.email.toLowerCase().indexOf(termo) !== -1 ||
-                    (digitos !== "" && u.cpf.replace(/\D/g, "").indexOf(digitos) !== -1);
+        var nome = (u.nome || "").toLowerCase();
+        var email = (u.email || "").toLowerCase();
+        var cpf = (u.cpf || "").replace(/\D/g, "");
+        var achou = nome.indexOf(termo) !== -1 ||
+                    email.indexOf(termo) !== -1 ||
+                    (digitos !== "" && cpf.indexOf(digitos) !== -1);
         if (!achou) return false;
       }
+
       return FiltroPreferencias.corresponde(u, estado.filtros);
     });
   }
@@ -93,7 +86,7 @@
       aoMudar: function (id) {
         estado.status = id;
         estado.pagina = 1;
-        renderTudo();
+        carregar();
       }
     });
 
@@ -116,11 +109,16 @@
     });
 
     CardUsuario.renderLista("#lista-usuarios", itens, {
-      urlDetalhe: function (u) { return URL_DETALHE + encodeURIComponent(u.id); },
-      textoVazio: TIPO === "voluntario" ? "Nenhum voluntário encontrado." : "Nenhum estudante encontrado.",
+      urlDetalhe: function (u) {
+        return URL_DETALHE + encodeURIComponent(u.id);
+      },
+      textoVazio: TIPO === "voluntario"
+        ? "Nenhum voluntário encontrado."
+        : "Nenhum estudante encontrado.",
+      mostrarOpcaoCertificado: TIPO === "voluntario",
       aoExcluir: excluir,
       aoMais: function (u) {
-        // TODO: definir o que o menu "⋮" faz (ex.: editar, ver detalhes)
+        solicitarNovoCertificado(u);
       }
     });
 
@@ -139,30 +137,71 @@
   function excluir(u) {
     Modal.confirmar({
       titulo: "Excluir usuário",
-      mensagem: "Tem certeza que deseja excluir " + u.nome + "? Essa ação não pode ser desfeita.",
+      mensagem: "Tem certeza que deseja excluir " + u.nome +
+        "? O cadastro, os vínculos e os chamados de suporte dessa pessoa serão apagados. Essa ação não pode ser desfeita.",
       textoConfirmar: "EXCLUIR",
       perigo: true,
       aoConfirmar: function () {
-        usuarios = usuarios.filter(function (x) { return x.id !== u.id; });
-        renderTudo();
+        Api.chamar("/admin/usuarios/" + encodeURIComponent(u.id), {
+          method: "DELETE"
+        }).then(function () {
+          return carregar();
+        }).catch(erro);
+      }
+    });
+  }
+
+  /*
+   * Solicita um novo certificado:
+   * - o backend altera a situação para Pendente;
+   * - remove a referência ao certificado anterior;
+   * - envia um e-mail ao voluntário pedindo um novo envio.
+   */
+  function solicitarNovoCertificado(u) {
+    Modal.confirmar({
+      titulo: "Solicitar novo certificado",
+      mensagem: "O certificado atual de " + u.nome +
+        " será marcado como pendente e a referência ao arquivo anterior será removida. " +
+        "Um e-mail será enviado para " + u.email +
+        " solicitando que envie o certificado novamente. Deseja continuar?",
+      textoConfirmar: "SOLICITAR NOVO CERTIFICADO",
+      perigo: false,
+      aoConfirmar: function () {
+        Api.chamar(
+          "/admin/usuarios/" + encodeURIComponent(u.id) + "/certificado-pendente",
+          { method: "PUT", body: {} }
+        ).then(function (resposta) {
+          var aviso = resposta && resposta.email_enviado
+            ? "O voluntário foi notificado por e-mail."
+            : "O certificado foi marcado como pendente, mas o e-mail não pôde ser enviado. Verifique a configuração SMTP do servidor.";
+          alert((resposta && resposta.mensagem ? resposta.mensagem + "\n\n" : "") + aviso);
+          return carregar();
+        }).catch(erro);
       }
     });
   }
 
   document.addEventListener("DOMContentLoaded", function () {
+    if (Api.exigirPerfil) Api.exigirPerfil(["Admin"]);
+
     Navbar.render("#navbar", {
       itens: Navbar.ITENS_ADMIN,
       ativo: "usuarios",
       semCabecalhoMobile: true
     });
-    CabecalhoPagina.render("#cabecalho", { titulo: "Usuários cadastrados" });
-
-    document.getElementById("busca-usuario").addEventListener("input", function (e) {
-      estado.busca = e.target.value.trim();
-      estado.pagina = 1;
-      renderTudo();
+    CabecalhoPagina.render("#cabecalho", {
+      titulo: "Usuários cadastrados"
     });
 
-    renderTudo();
+    var busca = document.getElementById("busca-usuario");
+    if (busca) {
+      busca.addEventListener("input", function (e) {
+        estado.busca = e.target.value.trim();
+        estado.pagina = 1;
+        renderTudo();
+      });
+    }
+
+    carregar();
   });
 })();
