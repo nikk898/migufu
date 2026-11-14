@@ -30,6 +30,57 @@ router.get('/voluntario', autorizar('Voluntario'), async (req, res) => {
   res.json({ ...eu.rows[0], migufus: await completarPessoas(migufus.rows) });
 });
 
+// POST /api/painel/voluntario/certificado  (voluntario.html)
+// Corpo = o próprio PDF (Content-Type: application/pdf). Nome original no header X-Nome-Arquivo.
+// Reenvio (após reprovação) substitui o arquivo e volta o status para 'Pendente'.
+router.post(
+  '/voluntario/certificado',
+  autorizar('Voluntario'),
+  express.raw({ type: 'application/pdf', limit: '3mb' }),
+  async (req, res) => {
+    const erroHttp = (status, msg) => Object.assign(new Error(msg), { statusHttp: status });
+
+    const arquivo = req.body;
+    if (!Buffer.isBuffer(arquivo) || arquivo.length === 0) {
+      throw erroHttp(400, 'Envie um arquivo PDF');
+    }
+    if (arquivo.subarray(0, 5).toString('latin1') !== '%PDF-') {
+      throw erroHttp(400, 'O arquivo não é um PDF válido');
+    }
+
+    let nome = 'certificado.pdf';
+    try {
+      nome = decodeURIComponent(String(req.headers['x-nome-arquivo'] || '')) || nome;
+    } catch { /* mantém o nome padrão */ }
+    nome = nome.replace(/[\\/]/g, '_').slice(0, 255);
+
+    await db.transacao(async (c) => {
+      // Só atualiza se ainda não foi aprovado
+      const r = await c.query(
+        `UPDATE voluntario
+            SET certificado_url = $2, data_envio_certificado = NOW(),
+                status_aptidao = 'Pendente', ultima_atualizacao = NOW()
+          WHERE user_id = $1 AND status_aptidao <> 'Apto'`,
+        [req.usuario.id, 'db:' + nome]);
+      if (r.rowCount === 0) {
+        throw erroHttp(409, 'Não é possível enviar: voluntário já aprovado ou não encontrado');
+      }
+      await c.query(
+        `INSERT INTO voluntario_certificado
+                (voluntario_id, nome_arquivo, tipo_mime, tamanho_bytes, conteudo, enviado_em)
+         VALUES ($1, $2, 'application/pdf', $3, $4, NOW())
+         ON CONFLICT (voluntario_id) DO UPDATE
+            SET nome_arquivo = EXCLUDED.nome_arquivo,
+                tamanho_bytes = EXCLUDED.tamanho_bytes,
+                conteudo = EXCLUDED.conteudo,
+                enviado_em = NOW()`,
+        [req.usuario.id, nome, arquivo.length, arquivo]);
+    });
+
+    res.status(201).json({ mensagem: 'Certificado enviado para análise' });
+  }
+);
+
 // GET /api/painel/estudante  (estudante.html)
 router.get('/estudante', autorizar('Internacional'), async (req, res) => {
   const id = req.usuario.id;

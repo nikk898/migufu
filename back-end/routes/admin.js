@@ -130,8 +130,10 @@ router.get('/validacao', async (req, res) => {
   const { rows } = await db.query(
     `SELECT u.id, u.nome_completo AS nome, u.email, vo.cpf,
             COALESCE(vo.curso, 'Não se aplica') AS curso,
-            vo.certificado_url, vo.data_envio_certificado
+            vo.certificado_url, vo.data_envio_certificado,
+            vc.nome_arquivo AS arquivo_banco
        FROM base_user u JOIN voluntario vo ON vo.user_id = u.id
+       LEFT JOIN voluntario_certificado vc ON vc.voluntario_id = vo.user_id
       WHERE u.ativo AND u.perfil = 'Voluntario'
         AND vo.status_aptidao = 'Pendente' AND vo.certificado_url IS NOT NULL
         AND ${escopo}
@@ -145,13 +147,14 @@ router.get('/validacao', async (req, res) => {
     email: r.email,
     cpf: formatarCpf(r.cpf),
     curso: r.curso,
-    nome_arquivo: nomeArquivo(r.certificado_url),
+    nome_arquivo: r.arquivo_banco || nomeArquivo(r.certificado_url),
     data_envio: r.data_envio_certificado,
   })));
 });
 
 // GET /api/admin/validacao/:id/certificado
-// Link (http/https) guardado no banco -> { url }. Nome de arquivo -> o próprio PDF.
+// PDF guardado no banco -> o próprio PDF.
+// Reserva (formato antigo): link http/https -> { url }; nome de arquivo -> arquivo em disco.
 router.get('/validacao/:id/certificado', async (req, res) => {
   const id = idValido(req.params.id);
   if (!id) return res.status(400).json({ erro: 'Id inválido' });
@@ -159,11 +162,27 @@ router.get('/validacao/:id/certificado', async (req, res) => {
   const params = [id];
   const escopo = escopoPorPerfil(req.usuario, 'u', params);
   const { rows } = await db.query(
-    `SELECT vo.certificado_url FROM base_user u JOIN voluntario vo ON vo.user_id = u.id
+    `SELECT vo.certificado_url, vc.nome_arquivo, vc.tipo_mime, vc.conteudo
+       FROM base_user u JOIN voluntario vo ON vo.user_id = u.id
+       LEFT JOIN voluntario_certificado vc ON vc.voluntario_id = vo.user_id
       WHERE u.id = $1 AND ${escopo}`, params);
-  const url = rows[0] && rows[0].certificado_url;
-  if (!url) return res.status(404).json({ erro: 'Certificado não encontrado' });
+  const r = rows[0];
+  if (!r) return res.status(404).json({ erro: 'Certificado não encontrado' });
 
+  // PDF guardado no banco
+  if (r.conteudo) {
+    const ascii = r.nome_arquivo.replace(/[^\x20-\x7E]/g, '_').replace(/["\\]/g, '_');
+    res.set({
+      'Content-Type': r.tipo_mime || 'application/pdf',
+      'Content-Disposition': `inline; filename="${ascii}"; filename*=UTF-8''${encodeURIComponent(r.nome_arquivo)}`,
+      'Cache-Control': 'private, no-store',
+    });
+    return res.send(r.conteudo);
+  }
+
+  // Reserva: formato antigo (link ou arquivo em disco)
+  const url = r.certificado_url;
+  if (!url) return res.status(404).json({ erro: 'Certificado não encontrado' });
   if (ehLink(url)) return res.json({ url });
 
   // path.basename impede sair da pasta (ex.: "../../.env")

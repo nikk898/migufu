@@ -16,8 +16,9 @@
   // TODO: link do curso obrigatório no Moodle (ainda não definido)
   var URL_MOODLE = "";
 
-  // Dados de exemplo (iguais aos do protótipo do Figma).
-  // TODO: substituir por chamadas ao back-end quando a API estiver pronta.
+  // Tamanho máximo do PDF (o back-end também limita a 3 MB).
+  var TAMANHO_MAXIMO = 3 * 1024 * 1024;
+
   // Preenchido por GET /api/painel/voluntario
   var dados = { nome: "", status: "pendente", migufus: [] };
 
@@ -166,26 +167,40 @@
         return;
       }
 
+      if (arquivo.size > TAMANHO_MAXIMO) {
+        entrada.value = "";
+        mostrarMensagem("O arquivo deve ter no máximo 3 MB.", true);
+        return;
+      }
+
       enviar.disabled = false;
 
       mostrarMensagem("Arquivo selecionado: " + arquivo.name, false);
     });
 
-    // Simula o envio para análise.
+    // Envia o PDF para o back-end.
     enviar.addEventListener("click", function () {
-      if (!entrada.files[0]) {
+      var arquivo = entrada.files[0];
+
+      if (!arquivo) {
         mostrarMensagem("Escolha o certificado antes de continuar.", true);
         return;
       }
 
-      // TODO: substituir pela chamada real ao back-end.
-      dados.status = "em_analise";
-
-      entrada.value = "";
       enviar.disabled = true;
+      mostrarMensagem("Enviando certificado...", false);
 
-      mostrarMensagem("", false);
-      preencherTela(dados);
+      Api.enviarArquivo("/painel/voluntario/certificado", arquivo)
+        .then(function () {
+          dados.status = "em_analise";
+          entrada.value = "";
+          mostrarMensagem("", false);
+          preencherTela(dados);
+        })
+        .catch(function (e) {
+          enviar.disabled = false;
+          mostrarMensagem(e.message, true);
+        });
     });
 
     // Mantém o comportamento existente do Moodle.
@@ -247,7 +262,7 @@
     campo("vazio").hidden = temMigufus;
   }
 
-    document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function () {
     Navbar.render("#navbar", {
       variante: "app",
       itens: Navbar.ITENS_VOLUNTARIO,
