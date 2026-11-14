@@ -196,6 +196,17 @@ function configurarVinculoVoluntario() {
     el.hidden = !mensagem;
   }
 
+  // Os formulários não pedem senha: a pessoa cria a primeira senha pelo link enviado por e-mail
+  // (a mesma rota de "esqueci minha senha"). Devolve true se o pedido foi aceito.
+  function pedirSenhaPrimeiroAcesso(email) {
+    return Api.chamar('/senha/esqueci', { method: 'POST', body: { email } })
+      .then(() => {
+        try { sessionStorage.setItem('migufu_email_primeiro_acesso', email); } catch (e) { /* ignora */ }
+        return true;
+      })
+      .catch(() => false);
+  }
+
   function enviarCadastro(dados) {
     const botao = form.querySelector('button[type="submit"]');
     botao.disabled = true;
@@ -204,7 +215,11 @@ function configurarVinculoVoluntario() {
       method: 'POST',
       body: dados,
     })
-      .then(() => { window.location.href = 'login.html'; })
+      .then(() => pedirSenhaPrimeiroAcesso(dados.email))
+      .then((enviou) => {
+        // Cadastro feito. Com o e-mail enviado, a página de recuperar senha explica o próximo passo.
+        window.location.href = 'recuperar-senha.html' + (enviou ? '?cadastro=1' : '');
+      })
       .catch((e) => mostrarErroEnvio(e.message))
       .finally(() => { botao.disabled = false; });
   }

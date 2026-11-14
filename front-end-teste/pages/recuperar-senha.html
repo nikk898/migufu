@@ -64,7 +64,7 @@
           </svg>
 
           <h1 class="auth__titulo">E-mail enviado!</h1>
-          <p class="recuperar__descricao">
+          <p class="recuperar__descricao" id="confirmacao-texto">
             Enviamos as instruções para o seu e-mail cadastrado. Por favor, verifique sua caixa de entrada e de spam.
           </p>
 
@@ -77,11 +77,68 @@
           <p class="recuperar__status" id="reenviar-status" role="status"></p>
         </div>
 
+        <!-- Vista 3: nova senha. O link do e-mail abre esta página com ?token=... -->
+        <div class="recuperar__vista" id="vista-nova-senha" hidden>
+          <h1 class="auth__titulo">Defina sua senha</h1>
+          <p class="recuperar__descricao">
+            Escolha uma senha com pelo menos 8 caracteres para acessar o MIGUFU.
+          </p>
+
+          <form class="auth__form" id="form-nova-senha" novalidate>
+            <div class="campo">
+              <label class="campo__rotulo" for="nova-senha">Nova senha</label>
+              <div class="campo__senha">
+                <input class="campo__entrada" type="password" id="nova-senha" name="senha"
+                       placeholder="••••••••" autocomplete="new-password">
+                <button type="button" class="campo__olho"></button>
+              </div>
+            </div>
+
+            <div class="campo">
+              <label class="campo__rotulo" for="confirmar-senha">Confirmar nova senha</label>
+              <div class="campo__senha">
+                <input class="campo__entrada" type="password" id="confirmar-senha" name="confirmar"
+                       placeholder="••••••••" autocomplete="new-password" aria-describedby="nova-erro">
+                <button type="button" class="campo__olho"></button>
+              </div>
+              <p class="campo__erro" id="nova-erro" role="alert" hidden></p>
+            </div>
+
+            <button type="submit" class="botao botao--primario">Salvar senha</button>
+          </form>
+        </div>
+
+        <!-- Vista 4: senha salva -->
+        <div class="recuperar__vista recuperar__vista--confirmacao" id="vista-sucesso" hidden>
+          <svg class="recuperar__envelope" viewBox="0 0 120 90" role="img" aria-label="Senha salva">
+            <circle cx="60" cy="45" r="36" fill="#5b9bd5" stroke="#1b3a6b" stroke-width="3"/>
+            <path d="M43 46l12 12 24-26" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+
+          <h1 class="auth__titulo">Senha definida!</h1>
+          <p class="recuperar__descricao">
+            Sua senha foi salva com sucesso. Agora você já pode entrar no MIGUFU.
+          </p>
+
+          <a class="botao botao--primario" href="login.html">Ir para o login</a>
+        </div>
+
+        <!-- Vista 5: link usado, vencido ou inválido -->
+        <div class="recuperar__vista recuperar__vista--confirmacao" id="vista-link-invalido" hidden>
+          <h1 class="auth__titulo">Link inválido ou expirado</h1>
+          <p class="recuperar__descricao">
+            Este link não pode mais ser usado. Ele vale por 30 minutos e só funciona uma vez. Peça um novo link para continuar.
+          </p>
+
+          <a class="botao botao--primario" href="recuperar-senha.html">Pedir novo link</a>
+        </div>
+
       </div>
     </section>
   </main>
 
-  <script src="../js/auth-mock.js"></script>
+  <script src="../components/campo-senha.js"></script>
+  <script src="../js/api.js"></script>
   <script src="../js/recuperar-senha.js"></script>
 </body>
 </html>
