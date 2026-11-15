@@ -174,6 +174,17 @@ CREATE TABLE vinculo_migufu (
     CHECK (ativo OR data_fim IS NOT NULL)
 );
 
+CREATE TABLE IF NOT EXISTS voluntario_certificado (
+    voluntario_id INTEGER PRIMARY KEY
+        REFERENCES voluntario(user_id) ON DELETE CASCADE,
+    nome_arquivo VARCHAR(255) NOT NULL,
+    tipo_mime VARCHAR(100) NOT NULL DEFAULT 'application/pdf',
+    tamanho_bytes INTEGER NOT NULL CHECK (tamanho_bytes > 0 AND tamanho_bytes <= 3145728),
+    conteudo BYTEA NOT NULL,
+    enviado_em TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
 
 CREATE INDEX idx_campus_instituicao
     ON campus(id_instituicao);
