@@ -1,70 +1,268 @@
-# MiguFU 
+# MiguFU
+
 Plataforma de gestão e conexão entre estudantes voluntários e estudantes internacionais da Universidade Federal de Uberlândia (UFU).
 
-## Sobre o projeto
-O MiguFU é uma plataforma desenvolvida para apoiar o programa de acolhimento de estudantes internacionais da Universidade Federal de Uberlândia (UFU), facilitando a conexão entre esses estudantes e os voluntários da comunidade universitária.
+Este documento apresenta os passos para configurar e executar o projeto localmente.
 
-A chegada a um novo país envolve diversos desafios, como adaptação cultural, barreiras linguísticas, familiarização com a universidade e construção de uma rede de apoio. Nesse contexto, o programa MiguFU busca aproximar estudantes internacionais de voluntários que possam auxiliá-los durante sua experiência acadêmica e cultural na UFU.
+## 1. Pré-requisitos
 
-A plataforma tem como propósito centralizar e simplificar a gestão desse processo, oferecendo um ambiente digital no qual os participantes possam cadastrar suas informações, compartilhar interesses e preferências e acompanhar sua participação no programa.
+Antes de iniciar, instale:
 
-### Objetivo
-O objetivo do MiguFU é tornar o processo de acolhimento de estudantes internacionais mais organizado, acessível e eficiente, facilitando o trabalho dos responsáveis pelo programa e promovendo conexões mais adequadas entre os participantes.
+- [Node.js](https://nodejs.org/) (versão LTS recomendada).
+- npm (instalado junto com o Node.js).
+- [Visual Studio Code](https://code.visualstudio.com/).
+- Extensão **Live Server** do VS Code.
+- Uma conta e um projeto no [Supabase](https://supabase.com/), com banco PostgreSQL.
 
-Por meio da plataforma, pretende-se reduzir a dependência de processos manuais e informações dispersas, centralizando em um único sistema as informações necessárias para a gestão do programa.
+Confira as instalações:
 
-### Como a plataforma funcionará?
-A plataforma será organizada de forma a atender às necessidades dos diferentes participantes do programa.
+```bash
+node -v
+npm -v
+```
 
-- Estudantes voluntários: poderão realizar seu cadastro, informar dados acadêmicos, idiomas, interesses e preferências, além de acompanhar sua situação no programa e enviar o certificado de conclusão do curso obrigatório.
-- Estudantes internacionais: poderão cadastrar suas informações, compartilhar suas preferências e necessidades e utilizar a plataforma no idioma disponibilizado que melhor atenda às suas necessidades.
-Administradores: terão acesso a ferramentas para gerenciar os participantes, analisar os requisitos de participação, identificar perfis compatíveis e administrar as conexões entre voluntários e estudantes internacionais.
-- Conta mestre: será responsável pela gestão das instituições que utilizam a plataforma, permitindo centralizar a administração do sistema.
-A partir das informações fornecidas pelos participantes, os administradores poderão consultar e comparar perfis para identificar conexões que façam sentido considerando aspectos como idiomas, interesses, contexto acadêmico e disponibilidade.
+## 2. Estrutura esperada
 
-Dessa forma, a plataforma funcionará como uma ferramenta de apoio à gestão do programa, mantendo a participação dos administradores no processo de associação dos estudantes.
+O projeto é dividido em duas partes:
 
-### Como o MiguFU ajudará o programa?
-A implementação da plataforma busca trazer benefícios tanto para a equipe responsável pelo programa quanto para os estudantes participantes.
+```text
+MiguFU/
+├── back-end/
+│   ├── app.js
+│   ├── package.json
+│   ├── .env.exemple
+│   ├── banco_de_dados/
+│   │   └── banco_migufu.sql
+│   ├── middlewares/
+│   ├── routes/
+│   ├── scripts/
+│   ├── services/
+│   └── utils/
+│
+└── front-end-teste/
+    ├── pages/
+    ├── components/
+    ├── css/
+    └── js/
+```
 
-- Centralização das informações: os dados dos voluntários e estudantes internacionais ficarão organizados em um único ambiente.
-Facilidade na gestão: os administradores poderão visualizar os participantes, acompanhar sua situação e gerenciar as conexões realizadas.
-- Conexões mais adequadas: os dados de interesses, idiomas e preferências ajudarão a identificar participantes com perfis compatíveis.
-- Autonomia dos participantes: os usuários poderão atualizar suas informações sempre que necessário.
-- Maior organização: o acompanhamento dos certificados e da participação dos voluntários ficará integrado ao sistema.
-- Acessibilidade: a interface será planejada para diferentes dispositivos e para atender às necessidades linguísticas dos estudantes internacionais.
-- Possibilidade de expansão: a gestão de múltiplas instituições permitirá que a plataforma seja adaptada às necessidades de crescimento do programa.
-### Tecnologias utilizadas
-O projeto prevê a utilização das seguintes tecnologias:
+> A estrutura do front-end acima representa a organização esperada pelos caminhos utilizados nas configurações atuais. Caso a pasta tenha outro nome no seu clone, ajuste os caminhos indicados neste README e as URLs do arquivo `.env`.
 
-- HTML, CSS e JavaScript: desenvolvimento da interface da plataforma.
-- Node.js: ambiente de execução do backend.
-- Express: desenvolvimento da API e das funcionalidades do servidor.
-- Supabase: infraestrutura de banco de dados PostgreSQL e recursos associados.
-- Figma: prototipação e planejamento da experiência e da interface do usuário.
-- Git e GitHub: controle de versão e colaboração entre os integrantes da equipe.
-As tecnologias e a arquitetura poderão ser ajustadas conforme as necessidades identificadas durante o desenvolvimento.
+## 3. Configurar o banco de dados
 
-### Experiência do usuário
-O desenvolvimento da interface seguirá uma abordagem Mobile First, priorizando inicialmente a experiência em celulares e, posteriormente, adaptando a plataforma para tablets e computadores.
+1. Crie um projeto no Supabase.
+2. No painel do projeto, abra o **SQL Editor**.
+3. Abra o arquivo `back-end/banco_de_dados/banco_migufu.sql`.
+4. Copie o conteúdo e execute no SQL Editor.
+5. No Supabase, acesse **Project Settings → Database** e copie a string de conexão PostgreSQL. Se a conexão direta não funcionar no seu ambiente, utilize o Session Pooler.
 
-A experiência será planejada para ser intuitiva, responsiva e acessível, considerando que os usuários terão diferentes necessidades, idiomas e níveis de familiaridade com sistemas digitais.
+O script SQL cria as tabelas, tipos, relacionamentos e índices utilizados pela aplicação, além de cadastrar a instituição UFU.
 
-O design também buscará tornar os formulários mais claros e facilitar a navegação entre as funcionalidades disponíveis para cada perfil.
+## 4. Configurar as variáveis de ambiente
 
-### Estrutura do projeto
-O repositório reunirá os componentes necessários para o desenvolvimento da plataforma, incluindo a interface, o backend, a estrutura do banco de dados e a documentação técnica.
+Entre na pasta `back-end`:
 
-A organização dos diretórios será definida pela equipe durante a configuração inicial do projeto, buscando manter o código modular, organizado e de fácil manutenção.
+```bash
+cd back-end
+```
 
-### Desenvolvimento e colaboração
-O MiguFU será desenvolvido de forma colaborativa, com a participação de integrantes responsáveis pelo design, front-end, backend e banco de dados.
+Crie o arquivo `.env` a partir do modelo `.env.exemple`.
 
-A equipe trabalhará de maneira integrada, utilizando protótipos, documentação e controle de versão para organizar as entregas e facilitar a integração entre as diferentes partes do sistema.
+No Windows, você pode copiar pelo terminal:
 
-Contribuições deverão seguir os padrões de desenvolvimento e o fluxo de trabalho definidos pela equipe do projeto.
+```powershell
+Copy-Item .env.exemple .env
+```
 
-### Considerações finais
-Mais do que uma ferramenta de cadastro, o MiguFU pretende ser um instrumento de apoio ao acolhimento e à integração de estudantes internacionais na Universidade Federal de Uberlândia.
+No Linux/macOS:
 
-Ao reunir informações, facilitar a gestão e apoiar a conexão entre voluntários e estudantes internacionais, a plataforma busca contribuir para uma experiência universitária mais acolhedora, organizada e enriquecedora para todos os envolvidos.
+```bash
+cp .env.exemple .env
+```
+
+Abra o `.env` e preencha as variáveis:
+
+```env
+PORT=3000
+
+DATABASE_URL=sua_string_de_conexao_postgresql
+JWT_SECRET=sua_chave_secreta
+JWT_EXPIRES_IN=1d
+BCRYPT_ROUNDS=10
+
+FRONTEND_URL=http://127.0.0.1:5500
+
+BREVO_API_KEY=
+EMAIL_REMETENTE=
+EMAIL_REMETENTE_NOME=Migufu
+
+URL_REDEFINIR_SENHA=http://127.0.0.1:5500/front-end-teste/pages/recuperar-senha.html
+URL_SITE=http://127.0.0.1:5500/front-end-teste/pages/login.html
+```
+
+Gere uma chave para `JWT_SECRET` com:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+Copie o resultado para `JWT_SECRET`.
+
+### Configuração de e-mail (Brevo)
+
+O envio de e-mails transacionais utiliza a API da Brevo. Para habilitar recuperação de senha e notificações:
+
+1. Crie ou acesse sua conta Brevo.
+2. Gere uma API Key em **SMTP & API → API Keys**.
+3. Informe a chave em `BREVO_API_KEY`.
+4. Configure em `EMAIL_REMETENTE` um endereço verificado na Brevo.
+
+Se essas variáveis não forem configuradas, as funcionalidades que dependem do envio de e-mail não funcionarão corretamente. Não compartilhe sua API Key, senha do banco ou arquivo `.env`.
+
+> O arquivo `.env` contém informações privadas e não deve ser enviado ao GitHub. Mantenha apenas o modelo `.env.exemple` no repositório.
+
+## 5. Instalar e iniciar o back-end
+
+Ainda dentro da pasta `back-end`, instale as dependências:
+
+```bash
+npm install
+```
+
+Inicie o servidor:
+
+```bash
+node app.js
+```
+
+Quando estiver funcionando, o terminal deverá apresentar:
+
+```text
+Servidor rodando na porta 3000
+```
+
+A API ficará disponível em:
+
+```text
+http://localhost:3000/api
+```
+
+Para verificar se o servidor está ativo, acesse:
+
+```text
+http://localhost:3000/api/saude
+```
+
+A resposta esperada é:
+
+```json
+{
+  "ok": true
+}
+```
+
+Para encerrar o servidor, pressione `Ctrl + C` no terminal.
+
+### Criar um usuário administrador
+
+O projeto possui um script para criar usuários com perfil `Admin` ou `Mestre`.
+
+Execute o comando dentro da pasta `back-end`.
+
+Administrador (informe a sigla de uma instituição já cadastrada no banco):
+
+```bash
+node scripts/criar-admin.js --perfil Admin --nome "Nome do Administrador" --email administrador@exemplo.com --instituicao UFU
+```
+
+Conta mestre:
+
+```bash
+node scripts/criar-admin.js --perfil Mestre --nome "Nome do Responsável" --email mestre@exemplo.com
+```
+
+O script solicitará a senha no próprio terminal. Ela deve ter pelo menos 8 caracteres.
+
+## 6. Iniciar o front-end
+
+O front-end é composto por HTML, CSS e JavaScript e pode ser executado pelo Live Server.
+
+1. Abra a pasta raiz do projeto no VS Code.
+2. Localize a pasta `front-end-teste`.
+3. Abra `pages/login.html`.
+4. Clique com o botão direito no arquivo e selecione **Open with Live Server**.
+
+O endereço local normalmente será:
+
+```text
+http://127.0.0.1:5500/front-end-teste/pages/login.html
+```
+
+Mantenha o back-end em execução enquanto utiliza o front-end.
+
+### Conferir o endereço da API
+
+No arquivo `front-end-teste/js/api.js`, confira a constante:
+
+```javascript
+var API = "http://localhost:3000/api";
+```
+
+Ela deve apontar para o endereço em que o back-end está rodando.
+
+O arquivo `api.js` precisa ser carregado antes dos scripts das páginas que utilizam o objeto `Api`. Exemplo:
+
+```html
+<script src="../js/api.js"></script>
+<script src="../js/login.js"></script>
+```
+
+## 7. Executar o projeto no dia a dia
+
+Depois da configuração inicial, a rotina para iniciar o sistema é:
+
+**Terminal 1 — Back-end**
+
+```bash
+cd back-end
+node app.js
+```
+
+**Front-end**
+
+No VS Code, abra `front-end-teste/pages/login.html` com o Live Server.
+
+Acesse o endereço exibido pelo Live Server no navegador.
+
+## 8. Solução de problemas
+
+| Problema | Possível solução |
+|---|---|
+| `JWT_SECRET não definido no .env` | Verifique se o arquivo `.env` existe dentro de `back-end` e se `JWT_SECRET` está preenchido. |
+| `DATABASE_URL não definida no .env` | Configure a string de conexão do PostgreSQL no `.env`. |
+| Erro ao conectar ao banco | Confira a URL, as credenciais, a disponibilidade do Supabase e o tipo de conexão utilizado. |
+| Erro de CORS | Confira se `FRONTEND_URL` corresponde exatamente à origem aberta pelo Live Server, incluindo protocolo, host e porta. |
+| `Api is not defined` | Inclua `api.js` antes do script que utiliza `Api` na página HTML. |
+| Erro de conexão com a API | Confirme que o back-end está ativo na porta configurada e que `API` em `api.js` aponta para ele. |
+| E-mails não são enviados | Confira a API Key da Brevo e se o remetente está verificado. |
+
+## 9. Tecnologias
+
+- HTML5, CSS3 e JavaScript
+- Node.js
+- Express
+- PostgreSQL
+- Supabase
+- Brevo
+- Git e GitHub
+
+## 10. Segurança
+
+- Não publique o arquivo `.env`.
+- Não compartilhe credenciais do Supabase ou a API Key da Brevo.
+- Utilize senhas fortes para contas administrativas.
+- As permissões dos usuários são verificadas pelo back-end.
+
+---
+
+**MiguFU — Universidade Federal de Uberlândia (UFU)**
